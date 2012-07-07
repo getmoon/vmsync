@@ -1,4 +1,4 @@
-OBJS = libsync.o
+OBJ = libsync.o
 LIB = libsync.a
 DLL = libsync.so
 

@@ -16,6 +16,7 @@ $(DLL):$(OBJ)
 	gcc -shared -fPIC -o $(DLL) $(OBJ)
 	cp $(DLL) $(SYNC_TOP_SRC)/lib/
 
+
 clean:
 	@rm -rf $(OBJ)
 	@rm -f $(LIB)
