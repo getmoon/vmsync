@@ -1,0 +1,19 @@
+
+INCLUDE += -I$(SYNC_TOP_SRC)/include/base/
+INCLUDE += -I$(SYNC_TOP_SRC)/include/sync/
+
+default = $(PROG)
+
+C_FLAGS += $(INCLUDE) 
+
+.c.o:
+	gcc -c $< $(C_FLAGS)
+
+$(PROG):$(PROG_OBJ)
+	gcc -o $(PROG) $(PROG_OBJ) $(C_FLAGS) $(LIB)
+	cp $(PROG) $(FW50_TOP_SRC)/installing/bin/
+
+clean:
+	@rm -rf *.o
+	@rm -rf $(PROG)
+

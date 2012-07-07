@@ -1,0 +1,22 @@
+
+
+INCLUDE += -I$(SYNC_TOP_SRC)/include/base/
+INCLUDE += -I$(SYNC_TOP_SRC)/include/sync/
+
+all: $(LIB) $(DLL)
+
+.c.o:
+	gcc -c $< $(C_FLAGS) $(INCLUDE)
+
+$(LIB):$(OBJ)
+	ar rcv $(LIB) $(OBJ)
+	cp $(LIB) $(SYNC_TOP_SRC)/lib/
+
+$(DLL):$(OBJ)
+	gcc -shared -fPIC -o $(DLL) $(OBJ)
+	cp $(DLL) $(SYNC_TOP_SRC)/lib/
+
+clean:
+	@rm -rf $(OBJ)
+	@rm -f $(LIB)
+	@rm -f $(DLL)
