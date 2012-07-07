@@ -127,7 +127,10 @@ int main(int argc , char ** argv)
 	int		ret;
 	int		slen;
 	
-	arg_init(argc , argv);
+	ret = arg_init(argc , argv);
+	if(ret < 0){
+		return -1;
+	}
 
 	sock_fd = socket_init();
 	if(sock_fd < 0){

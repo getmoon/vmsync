@@ -11,6 +11,8 @@
 
 #include "priv.h"
 
+int		block_size = 4096;
+
 int main(int argc , char ** argv)
 {
 	int 			listenfd;

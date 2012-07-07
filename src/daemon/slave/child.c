@@ -54,6 +54,7 @@ void * do_child(void *arg)
 	__u32			msg_blockid;
 	__u32			msg_datalen;
 	__u32			msg_totlen;
+	struct config_file_t *	cft = NULL;
 
 	msg = (msg_data_t *)malloc( ALLOC_BUF_SIZE );
 	if(!msg){
@@ -96,7 +97,15 @@ void * do_child(void *arg)
 		msg_totlen = sizeof(msg_data_t) + msg_datalen;		
 		fprintf(stderr , "DEBUG: enough for a msg totlen %d\n" , msg_totlen);
 
-		msg_handler(pattr , msg , msg_datalen);
+		if(cft == NULL){
+			cft = config_cft_lookup(msg_fileid);
+			if(cft == NULL){
+				fprintf(stderr , "no config exist for file id %d\n" , msg_fileid);
+				goto backoff;
+			}
+		}
+
+		msg_handler(pattr , cft , msg_type , msg_fileid , msg_blockid , msg->data , msg_datalen);
 
 		offset -= msg_totlen;
 		if(offset > 0){

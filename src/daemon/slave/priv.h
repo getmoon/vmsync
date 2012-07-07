@@ -25,6 +25,16 @@ extern void * do_child(void *arg);
 
 extern int config_init(char * config_file);
 extern struct config_file_t * config_cft_lookup(__u32 file_id);
-extern int msg_handler(struct pthread_attr_t * pattr , msg_data_t * msg , __u32 datalen);
+
+extern int msg_handler(struct pthread_attr_t * pattr ,
+                struct config_file_t * cft ,
+                __u32 msg_type ,
+                __u32 msg_fileid ,
+                __u32 msg_blockid ,
+		__u8 * msg_data , 
+                __u32 msg_datalen);
+
+
+extern int             block_size;
 
 #endif//__SLAVE_PRIV_H__
