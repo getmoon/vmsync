@@ -3,9 +3,13 @@
 
 #include "base.h"
 
+#define MAX_REMOTE_IP_CNT	8
+#define INSTANCE_MAX_CNT        64
+
 struct remote_ip_t{
-	__u32		ip;
-	int		sockfd;
+	__u32			ip;
+	int			sockfd;
+	char			ipname[64];
 };
 
 struct config_instance_t{
@@ -14,10 +18,11 @@ struct config_instance_t{
 	__u32			fileid;
 	int			ipcnt;
 	struct remote_ip_t	remoteip[MAX_REMOTE_IP_CNT];
+	pthread_t		work_thread_t;
+	pthread_t		mana_thread_t;
 };
 
 
-
-
+extern struct config_instance_t instance_base[INSTANCE_MAX_CNT];
 
 #endif//

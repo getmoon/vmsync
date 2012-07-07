@@ -74,5 +74,13 @@ extern int vmsync_flock_set(int fd, int code);
 #define vmsync_file_lock(fd) vmsync_flock_set(fd, F_WRLCK)
 #define vmsync_file_unlock(fd) vmsync_flock_set(fd, F_UNLCK)
 
+#define print_debug(fmt , args...)\
+	fprintf(stderr , "DEBUG: "fmt , ##args)
+#define print_info(fmt , args...)\
+	fprintf(stderr , "INFO: "fmt , ##args)
+#define print_error(fmt , args...)\
+	fprintf(stderr , "ERROR: "fmt , ##args)
+
+
 #endif
 
