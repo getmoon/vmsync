@@ -24,6 +24,7 @@
  *	./a.out server_ip source_file file_id block_id size
  */
 
+#include "base.h"
 #include "msg.h"
 
 int		sock_fd = -1;
@@ -41,7 +42,7 @@ int socket_init(void)
 	unsigned short echoServPort;     /* Echo server port */
 	char *servIP;                    /* Server IP address (dotted quad) */
        
-	echoServPort = 6500;
+	echoServPort = BACKUP_SVR_PORT;
 	
 	if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0){
 		printf("socket() failed");

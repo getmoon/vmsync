@@ -12,7 +12,6 @@
 #include "base.h"
 #include "priv.h"
 
-#define TCP_PORT   	6500
 
 int slave_socket_init(void)
 {
@@ -33,7 +32,7 @@ int slave_socket_init(void)
 	memset((char *) &serv_addr, 0, sizeof(serv_addr));
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	serv_addr.sin_port = htons(TCP_PORT);
+	serv_addr.sin_port = htons(BACKUP_SVR_PORT);
 	
 	if(bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0){
 		print_error("server: can't bind local address\n");

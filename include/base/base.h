@@ -16,6 +16,8 @@
 #define FALSE	0
 #define TRUE	1
 
+#define BACKUP_SVR_PORT	9505
+
 typedef unsigned char __u8;
 typedef unsigned short  __u16;
 typedef unsigned int __u32;
