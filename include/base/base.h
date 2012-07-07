@@ -1,7 +1,6 @@
 #ifndef __BASE_H__
 #define __BASE_H__
 
-<<<<<<< HEAD:include/base/base.h
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
