@@ -9,3 +9,4 @@ clean:
 
 install:
 	@echo 'Ready to pack libsync.a, libsync.so, fsync.h'
+	make -C src install
