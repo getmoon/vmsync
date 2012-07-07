@@ -3,13 +3,13 @@
 
 #include "instance.h"
 
-#define BACKUP_SVR_PORT		6500
+//#define BACKUP_SVR_PORT		6500
 
-struct pthread_attr_t{
-        int             		use;
-        pthread_t       		tid;
-	struct config_instance_t *	inst;
-};        
+//struct pthread_attr_t{
+//        int             		use;
+//        pthread_t       		tid;
+//	struct config_instance_t *	inst;
+//};        
 
 extern int             block_size;
 extern int config_init(char * config_file);

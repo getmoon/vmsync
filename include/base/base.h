@@ -68,6 +68,8 @@ static inline int is_number(char *arg)
 #define MB(n) (1UL << 20)
 #define GB(n) (1UL << 30)
 
+extern int parse_ip(char * arg, uint32_t * ip);
+
 extern int vmsync_file_create(const char * file_name);
 extern int vmsync_file_remove(const char * file_name);
 

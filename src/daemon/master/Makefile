@@ -7,6 +7,7 @@ PROG_OBJ = 	master.o \
 
 PROG = slave
 LIB = -lpthread
+LIB += $(SYNC_TOP_SRC)/lib/libbase.a
 C_FLAGS = -g
 
 include $(SYNC_TOP_SRC)/mk/Makefile.prog
