@@ -36,10 +36,13 @@ int do_accept(int listenfd)
 		pattr->childfd = newsockfd;
 	
 
-		fprintf(stderr,"server: accept one\n");
+		fprintf(stderr,"server: accept one fd %d\n" , newsockfd);
 
+#if (00)
 		/* create a new thread to process the incomming request */
 		pthread_create(&pattr->tid, NULL , do_child , (void*)pattr);
+#endif
+		do_child((void*)pattr);
 
 		fprintf(stderr,"server: accept over\n");
 		close(newsockfd);

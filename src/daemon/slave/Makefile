@@ -2,6 +2,7 @@ PROG_OBJ = 	thread.o \
 		socket.o \
 		accept.o \
 		child.o \
+		config.o \
 		slave.o
 PROG = slave
 LIB = -lpthread
