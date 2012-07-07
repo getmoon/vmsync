@@ -92,7 +92,7 @@ static int config_readline(int fd , char * backup_filename , int * id)
 			return 1;
 		}
 
-		printf("%c " , c);
+		//fprintf(stderr , "%c " , c);
 		if(c == ':'){
 			token_cnt++;
 
@@ -103,7 +103,7 @@ static int config_readline(int fd , char * backup_filename , int * id)
 			}
 
 			if(token_cnt > 1){
-				printf("[%s]\n" , linebuffer);
+				fprintf(stderr , "[%s]\n" , linebuffer);
 				fprintf(stderr , "ERROR: only support one : in a line\n");
 			}
 		}

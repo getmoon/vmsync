@@ -53,6 +53,7 @@ void * do_child(void *arg)
 	__u32			msg_fileid;
 	__u32			msg_blockid;
 	__u32			msg_datalen;
+	__u32			msg_totlen;
 
 	msg = (msg_data_t *)malloc( ALLOC_BUF_SIZE );
 	if(!msg){
@@ -72,9 +73,10 @@ void * do_child(void *arg)
 		}
 
 		if(len == 0){
-			fprintf(stderr , "INFO: read len happen\n");
-			continue;
+			fprintf(stderr , "INFO: remote close socket happen\n");
+			goto backoff;
 		}
+
 		offset += len;
 		if(offset < sizeof(msg_data_t)){
 			fprintf(stderr , "DEBUG: not enough for msg head\n");
@@ -90,37 +92,16 @@ void * do_child(void *arg)
 			fprintf(stderr , "DEBUG: not enough for msg head and data\n");
 			continue;
 		}
-		
 
-		fprintf(stderr , "read len %d\n" , len);
+		msg_totlen = sizeof(msg_data_t) + msg_datalen;		
+		fprintf(stderr , "DEBUG: enough for a msg totlen %d\n" , msg_totlen);
 
+		msg_handler(pattr , msg , msg_datalen);
 
-		fprintf(stderr , "DEBUG: msg type %d file id %d block id %d datalen %d\n" , 
-			msg_type , msg_fileid , msg_blockid , msg_datalen);
-#if (00)
-		len = do_enough_read(pattr->childfd , (void*)msg , sizeof(msg_data_t));
-		if(len != sizeof(msg_data_t)){
-			fprintf(stderr , "BUG: not enough data for msg_data_t\n");
-			goto backoff;
+		offset -= msg_totlen;
+		if(offset > 0){
+			memcpy((void*)msg , (void*)msg + msg_totlen , offset);
 		}
-
-		fprintf(stderr , "DEBUG: msg type %d file id %d block id %d datalen %d\n" , 
-			msg->type , msg->fileid , msg->blockid , msg->datalen);
-		
-		
-		len = do_enough_read(pattr->childfd , msg->data , msg->datalen);
-		if(len < 0){
-			fprintf(stderr , "DEBUG: enough read fail on data\n");
-			goto backoff;
-		}
-
-		if(len != msg->datalen){
-			fprintf(stderr , "BUG: not enough data for msg_data_t\n");
-			goto backoff;
-		}
-
-		fprintf(stderr , "DEBUG: success read a msg\n");
-#endif
 	}
 
 backoff:

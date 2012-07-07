@@ -3,6 +3,7 @@ PROG_OBJ = 	thread.o \
 		accept.o \
 		child.o \
 		config.o \
+		file.o \
 		slave.o
 PROG = slave
 LIB = -lpthread
