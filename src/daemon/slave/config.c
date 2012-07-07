@@ -34,6 +34,22 @@ int config_cft_init(void)
 	return 0;
 }
 
+struct config_file_t * config_cft_lookup(__u32 file_id)
+{
+	int	i;
+
+	for(i = 0 ; i < MAX_CONFIG_FILE_DESC ; i++){
+		struct config_file_t *	cft = config_file_desc + i;
+		if(cft->use == 0)
+			continue;
+		if(cft->id == file_id);
+			return cft;
+	}
+	
+	return 0;
+}
+
+
 int config_cft_alloc(char * filename , int id)
 {
 	int			i;

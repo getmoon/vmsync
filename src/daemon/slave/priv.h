@@ -24,6 +24,7 @@ extern int do_accept(int listenfd);
 extern void * do_child(void *arg);
 
 extern int config_init(char * config_file);
+extern struct config_file_t * config_cft_lookup(__u32 file_id);
 extern int msg_handler(struct pthread_attr_t * pattr , msg_data_t * msg , __u32 datalen);
 
 #endif//__SLAVE_PRIV_H__
