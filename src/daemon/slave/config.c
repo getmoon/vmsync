@@ -67,14 +67,14 @@ int config_cft_alloc(char * filename , int id)
 
 		fd = open(filename , O_RDWR);
 		if(fd < 0){
-			fprintf(stderr , "ERROR: open backup file %s fail\n" , filename);
+			print_error("open backup file %s fail\n" , filename);
 			return -1;
 		}
 		cft->fd = fd;
 		return 0;
 	}
 
-	fprintf(stderr , "ERROR: too many config line , only support %d\n" , MAX_CONFIG_FILE_DESC);
+	print_error("too many config line , only support %d\n" , MAX_CONFIG_FILE_DESC);
 	return -1;
 }
 
@@ -94,14 +94,14 @@ static int config_readline(int fd , char * backup_filename , int * id)
 	while(1){
 		cnt = read(fd , &c , 1);
 		if(cnt == 0){
-			fprintf(stderr , "DEBUG: config read over\n");	
+			print_debug("config read over\n");	
 			return 0;
 		}
 
 		if(c == '\n'){
 			memcpy(idbuffer , linebuffer + token_pos + 1, strlen(linebuffer) - token_pos);
 			if(is_number(idbuffer) == 0){
-				fprintf(stderr , "ERROR: id in config file is not number\n");
+				print_error("id in config file is not number\n");
 				return -1;
 			}
 			*id = atoi(idbuffer);
@@ -119,8 +119,8 @@ static int config_readline(int fd , char * backup_filename , int * id)
 			}
 
 			if(token_cnt > 1){
-				fprintf(stderr , "[%s]\n" , linebuffer);
-				fprintf(stderr , "ERROR: only support one : in a line\n");
+				print_debug("[%s]\n" , linebuffer);
+				print_error("only support one : in a line\n");
 			}
 		}
 		linebuffer[i++] = c;
@@ -139,21 +139,21 @@ static int config_file_init(char * config_file)
 
 	fd = open(config_file , O_RDONLY);
 	if(fd < 0){
-		fprintf(stderr , "read config file %s open fail\n" , config_file);
+		print_error("read config file %s open fail\n" , config_file);
 		return -1;
 	}
 
 	while(1){
 		ret = config_readline(fd , filename , &id);
 		if(ret < 0){
-			fprintf(stderr , "SUCCESS: parse config file fail\n");
+			print_error("parse config file fail\n");
 			return 0;
 		}
 
 		if(ret == 0)
 			break;		
 		
-		fprintf(stderr , "DEBUG: file=%s id=%d\n" , filename , id);
+		print_debug("file=%s id=%d\n" , filename , id);
 		ret = config_cft_alloc(filename , id);
 		if(ret < 0){
 		}

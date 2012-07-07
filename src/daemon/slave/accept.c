@@ -23,28 +23,29 @@ int do_accept(int listenfd)
 		clilen = sizeof(cli_addr);
 		newsockfd = accept(listenfd, (struct sockaddr *) &cli_addr, &clilen);
 		if(newsockfd < 0){
-			fprintf(stderr,"server: accept error\n");
+			print_error("server: accept error\n");
 			exit(0);
 		}
 
 		pattr = slave_thread_alloc();
 		if(pattr == NULL){
-			fprintf(stderr , "alloc thread attr fail\n");
+			print_error("alloc thread attr fail\n");
 			close(newsockfd);
 			continue;
 		}
 		pattr->childfd = newsockfd;
 	
 
-		fprintf(stderr,"server: accept one fd %d\n" , newsockfd);
+		print_debug("server: accept one fd %d\n" , newsockfd);
 
-#if (00)
+#if (01)
 		/* create a new thread to process the incomming request */
 		pthread_create(&pattr->tid, NULL , do_child , (void*)pattr);
-#endif
+#else
 		do_child((void*)pattr);
+#endif
 
-		fprintf(stderr,"server: accept over\n");
+		print_debug("server: accept over\n");
 		close(newsockfd);
 		/* the server is now free to accept another socket request */
 	}

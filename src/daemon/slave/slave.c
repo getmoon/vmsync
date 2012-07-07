@@ -20,13 +20,13 @@ int main(int argc , char ** argv)
 
 	ret = config_init("/home/getmoon/backup_config_file");
 	if(ret < 0){
-		fprintf(stderr , "config file init fail\n");
+		print_error("config file init fail\n");
 		exit(0);
 	}
 
 	ret = slave_thread_init();
 	if(ret < 0){
-		fprintf(stderr , "slave thread init fail\n");
+		print_error("slave thread init fail\n");
 		exit(0);
 	}	
 

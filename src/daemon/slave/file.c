@@ -27,20 +27,20 @@ int msg_handler(struct pthread_attr_t * pattr ,
 	int		ret;
 
 	if(msg_type != MSG_TYPE_SYNC_DATA){
-		fprintf(stderr , "INFO: msg type %d fail\n" , MSG_TYPE_SYNC_DATA);
+		print_info("msg type %d fail\n" , MSG_TYPE_SYNC_DATA);
 		return 0;
 	}
 
 	offset = msg_blockid * block_size;
 	ret = lseek(cft->fd , offset , SEEK_SET);
 	if(ret < 0){
-		fprintf(stderr , "ERROR: lseek file fail offset %d\n" , offset);
+		print_error("lseek file fail offset %d\n" , offset);
 		return -1;
 	}
 
 	ret = write(cft->fd , msg_data , msg_datalen);
 	if(ret < 0){
-		fprintf(stderr , "ERROR: write file fail \n");
+		print_error("write file fail \n");
 		return -1;
 	}
 	

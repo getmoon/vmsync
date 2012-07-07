@@ -29,7 +29,7 @@ retry:
 	}
 
 	if(len < 0){
-		fprintf(stderr , "INFO: child socket closed \n");
+		print_error("INFO: child socket closed \n");
 		return -1;
 	}
 
@@ -58,29 +58,29 @@ void * do_child(void *arg)
 
 	msg = (msg_data_t *)malloc( ALLOC_BUF_SIZE );
 	if(!msg){
-		fprintf(stderr , "ERROR: child thread alloc buffer fail\n");
+		print_error("child thread alloc buffer fail\n");
 		goto backoff;
 	}
 
-	fprintf(stderr , "accept child fd %d\n" , pattr->childfd);
+	print_debug("accept child fd %d\n" , pattr->childfd);
 	
 	offset = 0;
 	while(1){
 
 		len = read(pattr->childfd , (void*)msg + offset , ALLOC_BUF_SIZE/2);
 		if(len < 0){
-			fprintf(stderr , "DEBUG: read fail happen\n");
+			print_debug("read fail happen\n");
 			goto backoff;
 		}
 
 		if(len == 0){
-			fprintf(stderr , "INFO: remote close socket happen\n");
+			print_info("remote close socket happen\n");
 			goto backoff;
 		}
 
 		offset += len;
 		if(offset < sizeof(msg_data_t)){
-			fprintf(stderr , "DEBUG: not enough for msg head\n");
+			print_debug("not enough for msg head\n");
 			continue;
 		}
 		
@@ -90,17 +90,17 @@ void * do_child(void *arg)
 		msg_datalen = ntohl(msg->datalen);
 
 		if(offset < (sizeof(msg_data_t) + msg_datalen)){
-			fprintf(stderr , "DEBUG: not enough for msg head and data\n");
+			print_debug("not enough for msg head and data\n");
 			continue;
 		}
 
 		msg_totlen = sizeof(msg_data_t) + msg_datalen;		
-		fprintf(stderr , "DEBUG: enough for a msg totlen %d\n" , msg_totlen);
+		print_debug("enough for a msg totlen %d\n" , msg_totlen);
 
 		if(cft == NULL){
 			cft = config_cft_lookup(msg_fileid);
 			if(cft == NULL){
-				fprintf(stderr , "no config exist for file id %d\n" , msg_fileid);
+				print_info("no config exist for file id %d\n" , msg_fileid);
 				goto backoff;
 			}
 		}
