@@ -1,3 +1,3 @@
-SUBDIRS = master slave
+SUBDIRS = slave
 
 include $(SYNC_TOP_SRC)/mk/Makefile.dir

@@ -11,7 +11,7 @@ C_FLAGS += $(INCLUDE)
 
 $(PROG):$(PROG_OBJ)
 	gcc -o $(PROG) $(PROG_OBJ) $(C_FLAGS) $(LIB)
-	cp $(PROG) $(FW50_TOP_SRC)/installing/bin/
+	cp $(PROG) $(SYNC_TOP_SRC)/installing/bin/
 
 clean:
 	@rm -rf *.o
