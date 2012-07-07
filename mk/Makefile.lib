@@ -14,8 +14,13 @@ $(LIB):$(OBJ)
 
 $(DLL):$(OBJ)
 	gcc -shared -fPIC -o $(DLL) $(OBJ)
+ifdef $(DLL)
 	cp $(DLL) $(SYNC_TOP_SRC)/lib/
+endif
 
+install:
+	cp $(DLL) $(SYNC_TOP_SRC)/lib/
+	
 
 clean:
 	@rm -rf $(OBJ)

@@ -17,3 +17,7 @@ clean:
 	@rm -rf *.o
 	@rm -rf $(PROG)
 
+install:
+	cp $(PROG) $(SYNC_TOP_SRC)/installing/bin/
+	
+

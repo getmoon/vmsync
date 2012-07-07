@@ -5,6 +5,7 @@ default: clean
 clean:
 	rm -rf lib/*
 	rm -rf installing/bin/*
+	rm -rf installing/test/*
 	make -C src clean
 
 install:
