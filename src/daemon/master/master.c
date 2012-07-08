@@ -15,13 +15,14 @@
 
 int		block_size = 4096;
 
+#if 1
 int main(int argc , char ** argv)
 {
 	int				ret;
 	int				i;
 	struct config_instance_t *	inst;
 
-	ret = config_init("/home/getmoon/source_config_file");
+	ret = config_init("/opt/sync/cfg/master_cfg.ini");
 	if(ret < 0){
 		print_error("config file init fail\n");
 		exit(0);
@@ -42,3 +43,22 @@ int main(int argc , char ** argv)
 	return(0);
 }
 
+#else
+
+int main(int argc , char ** argv)
+{
+	int				ret;
+	int				i;
+	struct config_instance_t *	inst;
+
+	ret = config_init("config.txt");
+	if(ret < 0){
+		print_error("config file init fail\n");
+		exit(0);
+	}
+
+	config_cft_dump();
+	return(0);
+}
+
+#endif

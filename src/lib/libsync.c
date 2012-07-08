@@ -4,9 +4,6 @@
 /*
  * Sync APIs - Any problem pls let me known. 
  * E-mail: chengtao786@gmail.com
- * /tmp/sync/source: vmsync_init()
- * /tmp/sync/send: vmsync_send()
- * /tmp/sync/fail: vmsync_send()
  */ 
 
 static uint32_t f_block_size;
@@ -78,7 +75,7 @@ int vmsync_send(int fild_id, uint64_t offset , uint64_t len)
 	
 	vmsync_file_lock(f_lock_fd);
 	for (i = start_blk_id; i <= end_blk_id; i++){
-		sprintf(file_name, "%s/send/%d/%d", SYNC_WORK_DIR, fild_id, i);
+		sprintf(file_name, "%s/send/%d/all+%d", SYNC_WORK_DIR, fild_id, i);
 		ret = vmsync_file_create(file_name);
 	}
 	vmsync_file_unlock(f_lock_fd);

@@ -46,7 +46,7 @@ int do_accept(int listenfd)
 #endif
 
 		print_debug("server: accept over\n");
-		close(newsockfd);
+		//close(newsockfd);
 		/* the server is now free to accept another socket request */
 	}
 

@@ -4,7 +4,7 @@
 #include "base.h"
 
 #define MAX_REMOTE_IP_CNT	8
-#define INSTANCE_MAX_CNT        64
+#define INSTANCE_MAX_CNT        (64+1)
 
 struct remote_ip_t{
 	__u32			ip;
@@ -22,6 +22,15 @@ struct config_instance_t{
 	pthread_t		mana_thread_t;
 };
 
+struct dir_instance_t{
+	struct dir_instance_t *next;
+	char				filename[512];
+	int				blockid;
+	uint32_t			broadcast;
+};
+
+#define for_each_entry_dir(dir_c, dir_h)  for (dir_c = dir_h; dir_c != NULL; dir_c = dir_c->next)
+	
 
 extern struct config_instance_t instance_base[INSTANCE_MAX_CNT];
 

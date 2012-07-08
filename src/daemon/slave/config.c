@@ -65,7 +65,7 @@ int config_cft_alloc(char * filename , int id)
 		cft->use = 1;
 		sprintf(cft->filename , "%s" , filename);
 
-		fd = open(filename , O_RDWR);
+		fd = open(filename , O_WRONLY |O_CREAT, 0666);
 		if(fd < 0){
 			print_error("open backup file %s fail\n" , filename);
 			return -1;

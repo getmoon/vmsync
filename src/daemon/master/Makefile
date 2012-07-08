@@ -5,7 +5,7 @@ PROG_OBJ = 	master.o \
 		mana_handler.o \
 		socket.o \
 
-PROG = slave
+PROG = master
 LIB = -lpthread
 LIB += $(SYNC_TOP_SRC)/lib/libbase.a
 C_FLAGS = -g

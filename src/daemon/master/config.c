@@ -13,13 +13,6 @@
 #include "base.h"
 
 
-
-//#define INSTANCE_MAX_CNT	64
-//#define MAX_REMOTE_IP_CNT 64
-//
-//#define INSTANCE_MAX_CNT 64
-
-
 int config_cft_init(void)
 {
 	int				i;
@@ -30,15 +23,41 @@ int config_cft_init(void)
 	for(i = 0 ; i < INSTANCE_MAX_CNT ; i++){
 		inst = instance_base + i;
 		inst->use = 0;
-		inst->filename[0] = '0';
+		//inst->filename[0] = '0';
 		inst->fileid = 0;
 		inst->ipcnt = 0;
+
+		memset(inst->filename, 0, 512);
 		for (j = 0; j < MAX_REMOTE_IP_CNT; j++){
 			rip = inst->remoteip + j;
 			rip->sockfd = -1;
 			rip->ip = 0;
-			sprintf(rip->ipname, "%d.%d.%d.%d", 0, 0, 0, 0);
+			//sprintf(rip->ipname, "%d.%d.%d.%d", 0, 0, 0, 0);
+			memset(rip->ipname, 0, 64);
 		}
+	}
+
+	return 0;
+}
+
+int config_cft_dump(void)
+{
+	int				i;
+	int				j;
+	struct remote_ip_t		*rip;
+	struct config_instance_t	*inst;
+
+	for(i = 0 ; i < INSTANCE_MAX_CNT ; i++){
+		inst = instance_base + i;
+		if (inst->use == 0)
+			continue;
+		
+		print_debug("[%d][use=%d][filename=%s][fileid=%d][ipcnt=%d]", i, inst->use, inst->filename, inst->fileid, inst->ipcnt);
+		for (j = 0; j < inst->ipcnt; j++){
+			rip = inst->remoteip + j;
+			print_debug("[%08x - %s]", rip->ip, rip->ipname);
+		}
+		print_debug("\n");
 	}
 
 	return 0;
@@ -59,7 +78,7 @@ struct config_instance_t *  config_cft_inst_alloc()
 		return inst;
 	}
 
-	fprintf(stderr , "ERROR: too many config line , only support %d\n" , INSTANCE_MAX_CNT - 1);
+	print_error("too many config line , only support %d\n" , INSTANCE_MAX_CNT - 1);
 	return NULL;
 }
 
@@ -73,7 +92,6 @@ static int config_readline(int fd , struct config_instance_t * inst)
 
 	char	linebuffer[1024];
 	char	idbuffer[64];
-	char	ipbuffer[64];
 	int	ip_idx = 0;
 
 	memset(linebuffer , 0 , 1024);
@@ -83,15 +101,16 @@ static int config_readline(int fd , struct config_instance_t * inst)
 		// source_file_full_name_1:id_1:IP1:IP2:IP3..
 		cnt = read(fd , &c , 1);
 		if(cnt == 0){
-			fprintf(stderr , "DEBUG: config read over\n");	
+			print_debug("config read over\n");	
 			return 0;
 		}
 
 		// IP
 		if( c == '\n'){
 			memcpy(inst->remoteip[ip_idx].ipname, linebuffer + token_pos + 1, strlen(linebuffer) - token_pos);
+			inst->ipcnt++;
 			if (parse_ip(inst->remoteip[ip_idx].ipname, &inst->remoteip[ip_idx].ip)){
-				fprintf(stderr , "ERROR: %s is not a valid ip addr\n", inst->remoteip[ip_idx].ipname);
+				fprintf(stderr , "ERROR:%s is not a valid ip addr\n", inst->remoteip[ip_idx].ipname);
 				return -1;
 			}
 			
@@ -114,12 +133,13 @@ static int config_readline(int fd , struct config_instance_t * inst)
 					return -1;
 				}
 
+				idbuffer[strlen(linebuffer) - token_pos] = '\0';
 				inst->fileid = atoi(idbuffer);
 				token_pos = i;
 			}
 
 			// parse_ip
-			if (token_cnt > MAX_REMOTE_IP_CNT + 2){
+			if (token_cnt > MAX_REMOTE_IP_CNT + 1){
 				fprintf(stderr , "[%s]\n" , linebuffer);
 				fprintf(stderr , "ERROR: only support %d IP : in one inst\n", MAX_REMOTE_IP_CNT);
 				return -1;
@@ -131,6 +151,10 @@ static int config_readline(int fd , struct config_instance_t * inst)
 					fprintf(stderr , "ERROR: %s is not a valid ip addr\n", inst->remoteip[ip_idx].ipname);
 					return -1;
 				}
+
+				inst->remoteip[ip_idx].ipname[strlen(linebuffer) - token_pos] = '\0';
+				token_pos = i;
+				inst->ipcnt++;
 				ip_idx++;
 			}
 		}

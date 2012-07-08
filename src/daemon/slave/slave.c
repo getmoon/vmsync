@@ -18,7 +18,7 @@ int main(int argc , char ** argv)
 	int 			listenfd;
 	int			ret;
 
-	ret = config_init("/home/getmoon/backup_config_file");
+	ret = config_init("/opt/sync/cfg/slave_cfg.ini");
 	if(ret < 0){
 		print_error("config file init fail\n");
 		exit(0);

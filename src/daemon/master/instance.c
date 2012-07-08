@@ -11,8 +11,8 @@
 
 
 #include "priv.h"
+#include "instance.h"
 
-#define INSTANCE_MAX_CNT		64
 
 struct config_instance_t instance_base[INSTANCE_MAX_CNT];
 
