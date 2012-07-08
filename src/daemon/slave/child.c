@@ -80,7 +80,7 @@ void * do_child(void *arg)
 
 		offset += len;
 		if(offset < sizeof(msg_data_t)){
-			print_debug("not enough for msg head\n");
+			print_debug("not enough for msg head, offset = %d\n", offset);
 			continue;
 		}
 		
@@ -95,7 +95,7 @@ void * do_child(void *arg)
 		}
 
 		msg_totlen = sizeof(msg_data_t) + msg_datalen;		
-		print_debug("enough for a msg totlen %d\n" , msg_totlen);
+		//print_debug("enough for a msg totlen %d\n" , msg_totlen);
 
 		if(cft == NULL){
 			cft = config_cft_lookup(msg_fileid);

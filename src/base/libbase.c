@@ -65,3 +65,32 @@ int parse_ip(char *arg, uint32_t *ip)
 out:
 	return ret;
 }
+
+int parse_u32(char *arg, uint32_t *num)
+{
+	long long ret;
+
+	if(arg == NULL || num == NULL) {
+		ret = -1;
+		goto out;
+	}
+
+	ret = is_number(arg);
+	if(ret == FALSE) {
+		ret = -1;
+		goto out;
+	}
+
+	ret = strtoll(arg, NULL, 0);
+	if(ret < 0 || ret > 0xffffffff) {
+		ret = -1;
+		goto out;
+	}
+
+	*num = ret;
+	ret = 0;
+out:
+	return ret;
+}
+
+

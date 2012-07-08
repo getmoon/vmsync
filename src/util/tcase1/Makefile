@@ -1,6 +1,6 @@
 PROG_OBJ = tcase.o
 PROG = tcase
-LIB = -lsync -lbase
+LIB = -L$(SYNC_TOP_SRC)/lib/ -lsync -lbase
 EXT_LIB =
 C_FLAGS = -g
 

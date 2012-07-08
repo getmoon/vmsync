@@ -25,7 +25,7 @@ struct config_instance_t{
 struct dir_instance_t{
 	struct dir_instance_t *next;
 	char				filename[512];
-	int				blockid;
+	uint32_t			blockid;
 	uint32_t			broadcast;
 };
 

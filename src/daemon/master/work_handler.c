@@ -40,11 +40,10 @@ static int filename_parse(char * filename, struct dir_instance_t * elem)
 				
 				curr_str = block_id;
 			}else if (tokens == 2){
-				if(is_number(block_id) == 0){
+				if(parse_u32(block_id, &elem->blockid)){
 					return -1;
 				}
 
-				elem->blockid = atoi(block_id);
 				curr_str = ip_str;
 			}
 
@@ -59,10 +58,9 @@ static int filename_parse(char * filename, struct dir_instance_t * elem)
 
 	
 	if (tokens == 1){// parse_blockid
-		if(is_number(block_id) == 0)
+		if(parse_u32(block_id, &elem->blockid))
 			return -1;
 
-		elem->blockid = atoi(block_id);
 		return 0;
 	}else if (tokens == 2){// //accert this is a signle element, parse_ip
 		if (parse_ip(ip_str, &elem->broadcast))
@@ -132,24 +130,23 @@ static void dump_data(__u8 *data, int size)
 	printf("]\n");
 }
 
-static msg_data_t * load_msg(int fd, __u32 type, __u32 file_id, __u32 blockid, __u32 blk_len)
+static msg_data_t * load_msg(int fd, __u32 type, __u32 file_id, __u32 blockid, __u32 blk_len, __u8 * msg_buffer)
 {
 	int	size = sizeof(msg_data_t) + blk_len;
 	int	read_size;
-	msg_data_t * msg = (msg_data_t*)malloc(size);
+	msg_data_t * msg = (msg_data_t*)msg_buffer;
 
-	msg->type = type;
-	msg->fileid = file_id;
-	msg->blockid = blockid;
-	msg->datalen = blk_len;
+	msg->type = htonl(type);
+	msg->fileid = htonl(file_id);
+	msg->blockid = htonl(blockid);
 
 	if (lseek(fd, blockid * blk_len, SEEK_SET) != (blockid * blk_len)){
 		print_error("lseek error\n");
 		return NULL;
 	}
 
-	read_size = read(fd, msg->data, msg->datalen);
-	msg->datalen = read_size;
+	read_size = read(fd, msg->data, blk_len);
+	msg->datalen = htonl(read_size);
 
 	return msg;
 }
@@ -158,20 +155,21 @@ static int send_msg(msg_data_t *msg, struct remote_ip_t * rip)
 {
 	int	ret;
 
-	print_debug("Send %d bytes to %s\n", msg->datalen, rip->ipname);
-	ret = write(rip->sockfd, msg->data, msg->datalen);
+	//print_debug("Send %d bytes to %s\n", msg->datalen, rip->ipname);
+	//print_debug("msg->fileid = %d\n", ntohl(msg->fileid));
+	//print_debug("msg->blockid = %d\n", ntohl(msg->blockid));
+	//print_debug("msg->datalen = %d\n", ntohl(msg->datalen));
+	ret = write(rip->sockfd, /*msg->data*/ (char*)msg, sizeof(msg_data_t) + ntohl(msg->datalen));
 	if (ret <= 0)
 		return -1;
 
-	dump_data(msg->data, msg->datalen > 64 ? 64 : msg->datalen);
-	print_debug("Send %d bytes over!\n", ret);
+	//dump_data(msg->data, ntohl(msg->datalen) > 64 ? 64 : ntohl(msg->datalen));
 	return 0;
 }
 
 static void release_msg(msg_data_t *msg)
 {
-	if (msg)
-		free(msg);
+	//if (msg) free(msg);
 }
 
 void * do_work_handler(void *arg)
@@ -186,22 +184,29 @@ void * do_work_handler(void *arg)
 	char					send_dir[512] = "";
 	char					file_lock_name[512] = "";
 	char					record_signle_name[512] = "";
-	struct remote_ip_t		*rip;
-	struct dir_instance_t	*dir_head;
-	struct dir_instance_t	*dir_curr;
-	msg_data_t 			*msg;
+	struct remote_ip_t			*rip;
+	struct dir_instance_t			*dir_head;
+	struct dir_instance_t			*dir_curr;
+	msg_data_t 				*msg;
+	__u8					*msg_buff;
 	
 	
 	sprintf(file_lock_name, "%s/lock/%d.lck", SYNC_WORK_DIR, file_id);
 	sprintf(send_dir, "%s/send/%d/", SYNC_WORK_DIR, file_id);
-	source_file_fid = open(inst->filename, O_RDONLY | O_CREAT, 0666);
-	if (source_file_fid < 0){
-		print_error("open %s error, thread exist\n", inst->filename);
-		return NULL;
-	}
+	//source_file_fid = open(inst->filename, O_RDONLY | O_CREAT, 0666);
+	//if (source_file_fid < 0){
+	//	print_error("open %s error, thread exist\n", inst->filename);
+	//	return NULL;
+	//}
 
 	if (access(send_dir, F_OK))
 		mkdir(send_dir, 0777);
+
+	msg_buff = (__u8*)malloc(MB(16));
+	if (!msg_buff){
+		print_error("Alloc memory fails\n");
+		return NULL;
+	}
 
 	lock_fd = open(file_lock_name, O_RDWR | O_CREAT , 0666);	
 	while (1){
@@ -213,12 +218,14 @@ void * do_work_handler(void *arg)
 			usleep(0);
 			continue;
 		}
+		source_file_fid = open(inst->filename, O_RDONLY | O_CREAT, 0666);
 		for_each_entry_dir(dir_curr, dir_head){
-			msg = load_msg(source_file_fid, MSG_TYPE_SYNC_DATA, file_id, dir_curr->blockid, block_size);
+			msg = load_msg(source_file_fid, MSG_TYPE_SYNC_DATA, file_id, dir_curr->blockid, block_size, msg_buff);
 			if (!msg){
 				continue;
 			}
 				
+#if (00)
 			for (i = 0; i < inst->ipcnt; i++){
 				rip = inst->remoteip + i;
 				if (rip->sockfd != -1 && (dir_curr->broadcast == 0xffffffff || dir_curr->broadcast == rip->ip)){
@@ -231,21 +238,48 @@ void * do_work_handler(void *arg)
 				}
 			}
 
-			release_msg(msg);
 			if ( (dir_curr->broadcast == 0xffffffff) || 
 					( (dir_curr->broadcast != 0xffffffff) && (ret == 0))){
 				vmsync_file_remove(dir_curr->filename);
 			}
-		}
+#else
+			if (dir_curr->broadcast == 0xffffffff){
+				for (i = 0; i < inst->ipcnt; i++){
+					rip = inst->remoteip + i;
+					if (rip->sockfd != -1) {
+						ret = send_msg(msg, rip);
+						if (ret < 0){
+							rip->sockfd = -1;
+							sprintf(record_signle_name, 
+								"%s/sgl+%d+%s", send_dir, dir_curr->blockid, rip->ipname);
+							vmsync_file_create(record_signle_name);
+						}
+					}
+				}
 
+				vmsync_file_remove(dir_curr->filename);
+			}else{
+				for (i = 0; i < inst->ipcnt; i++){
+					rip = inst->remoteip + i;
+					if ((rip->sockfd != -1) && (rip->ip == dir_curr->broadcast) ){
+						ret = send_msg(msg, rip);
+						if (ret == 0)
+							vmsync_file_remove(dir_curr->filename);
+					}
+				}
+			}
+#endif
+			//release_msg(msg);
+		}
+		close(source_file_fid);
 		release_dir(dir_head);
 		// remove files
 		// To All, just delete it, To signal host, if send success, delete it. if NOT, do not delete it.
 		vmsync_file_unlock(lock_fd);
-
 	}
 
 	close(lock_fd);
+	free(msg_buff);
 
 
 	return 0;

@@ -42,7 +42,8 @@ struct config_file_t * config_cft_lookup(__u32 file_id)
 		struct config_file_t *	cft = config_file_desc + i;
 		if(cft->use == 0)
 			continue;
-		if(cft->id == file_id);
+
+		if(cft->id == file_id)
 			return cft;
 	}
 	

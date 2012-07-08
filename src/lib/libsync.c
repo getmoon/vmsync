@@ -27,7 +27,7 @@ int vmsync_init(const char * source_file_full_name, int file_id, uint32_t block_
 	sprintf(file_lock_name, "%s/lock/%d.lck", SYNC_WORK_DIR, file_id);
 	fd = open(file_lock_name, O_RDWR | O_CREAT, 0666);
 	if (fd < 0){
-		perror("Create lock file %s error" , file_lock_name);
+		print_error("Create lock file %s error" , file_lock_name);
 		return fd;
 	}
 
@@ -35,7 +35,7 @@ int vmsync_init(const char * source_file_full_name, int file_id, uint32_t block_
 	if (access(dir_name, F_OK)){
 		ret = mkdir(dir_name, 0777);
 		if (ret < 0){
-			perror("Create directory %s error" , dir_name);
+			print_error("Create directory %s error" , dir_name);
 			return ret;
 		}
 	}
@@ -55,11 +55,11 @@ void vmsync_fini(const char * source_file_full_name, int file_id)
 /* /tmp/sync/send/ */
 int vmsync_send(int fild_id, uint64_t offset , uint64_t len)
 {
-	int	ret;
-	int	i;
-	int	start_blk_id;
-	int	end_blk_id;
-	char	file_name[512];
+	int			ret;
+	uint32_t		i;
+	uint32_t		start_blk_id;
+	uint32_t		end_blk_id;
+	char			file_name[512];
 
 	if (len == 0)
 		return ERROR_SYNC_OK;
@@ -75,7 +75,7 @@ int vmsync_send(int fild_id, uint64_t offset , uint64_t len)
 	
 	vmsync_file_lock(f_lock_fd);
 	for (i = start_blk_id; i <= end_blk_id; i++){
-		sprintf(file_name, "%s/send/%d/all+%d", SYNC_WORK_DIR, fild_id, i);
+		sprintf(file_name, "%s/send/%d/all+%llu", SYNC_WORK_DIR, fild_id, i);
 		ret = vmsync_file_create(file_name);
 	}
 	vmsync_file_unlock(f_lock_fd);
