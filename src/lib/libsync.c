@@ -84,7 +84,7 @@ int vmsync_send(int fild_id, uint32_t offset , uint32_t len)
 	vmsync_file_lock(f_lock_fd);
 	//print_debug("lock file success\n");
 	for (i = start_blk_id; i <= end_blk_id; i++){
-		sprintf(file_name, "%s/send/%d/all+%llu", sync_work_dir, fild_id, i);
+		sprintf(file_name, "%s/send/%d/all+%lu", sync_work_dir, fild_id, i);
 		//print_debug("ready to create file:%s\n", file_name);
 		ret = vmsync_file_create(file_name);
 	}
