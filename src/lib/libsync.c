@@ -27,7 +27,7 @@ int vmsync_init(const char * source_file_full_name, int file_id, uint32_t block_
 	sprintf(file_lock_name, "%s/lock/%d.lck", SYNC_WORK_DIR, file_id);
 	fd = open(file_lock_name, O_RDWR | O_CREAT, 0666);
 	if (fd < 0){
-		perror("Create lock file error");
+		perror("Create lock file %s error" , file_lock_name);
 		return fd;
 	}
 
@@ -35,7 +35,7 @@ int vmsync_init(const char * source_file_full_name, int file_id, uint32_t block_
 	if (access(dir_name, F_OK)){
 		ret = mkdir(dir_name, 0777);
 		if (ret < 0){
-			perror("Create directory error");
+			perror("Create directory %s error" , dir_name);
 			return ret;
 		}
 	}

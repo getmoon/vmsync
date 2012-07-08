@@ -10,7 +10,7 @@ C_FLAGS += $(INCLUDE)
 	gcc -c $< $(C_FLAGS)
 
 $(PROG):$(PROG_OBJ)
-	gcc -o $(PROG) $(PROG_OBJ) $(C_FLAGS) $(LIB)
+	gcc -o $(PROG) $(PROG_OBJ) $(C_FLAGS) -L$(SYNC_TOP_SRC)/lib/ $(LIB) $(EXT_LIB)
 	cp $(PROG) $(SYNC_TOP_SRC)/installing/bin/
 
 clean:
