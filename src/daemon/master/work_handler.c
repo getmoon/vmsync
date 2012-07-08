@@ -254,10 +254,10 @@ void * do_work_handler(void *arg)
 								"%s/sgl+%d+%s", send_dir, dir_curr->blockid, rip->ipname);
 							vmsync_file_create(record_signle_name);
 						}
+						vmsync_file_remove(dir_curr->filename);
 					}
 				}
 
-				vmsync_file_remove(dir_curr->filename);
 			}else{
 				for (i = 0; i < inst->ipcnt; i++){
 					rip = inst->remoteip + i;
@@ -284,3 +284,4 @@ void * do_work_handler(void *arg)
 
 	return 0;
 }
+
