@@ -189,6 +189,8 @@ void * do_work_handler(void *arg)
 	struct dir_instance_t			*dir_curr;
 	msg_data_t 				*msg;
 	__u8					*msg_buff;
+	int					last_handle_time;
+	int					curr_handle_time;
 	
 	
 	sprintf(file_lock_name, "%s/lock/%d.lck", sync_work_dir, file_id);
@@ -209,7 +211,16 @@ void * do_work_handler(void *arg)
 	}
 
 	lock_fd = open(file_lock_name, O_RDWR | O_CREAT , 0666);	
+
+	last_handle_time = get_current_seconds();
 	while (1){
+		curr_handle_time = get_current_seconds();
+		
+		if((curr_handle_time - last_handle_time) < sync_period){
+			sleep(3);
+		}
+
+		last_handle_time = get_current_seconds();
 		vmsync_file_lock(lock_fd);
 
 		dir_head = load_dir(send_dir);

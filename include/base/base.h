@@ -102,5 +102,7 @@ static inline int file_exist(char * filename)
 
 #define file_unexist(filename)	(file_exist(filename)==0)
 
+extern int get_current_seconds(void);
+
 #endif
 

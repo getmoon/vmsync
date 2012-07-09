@@ -111,6 +111,7 @@ int main(int argc , char ** argv)
 	int		fd;
 	int		loopcnt;
 	int		i = 0;
+	int		time_seconds;
 
 	if(	(argc != 6) ||
 		(is_number(argv[2]) == 0) ||
@@ -121,6 +122,13 @@ int main(int argc , char ** argv)
 		usage();
 		return 0;
 	}
+		
+	time_seconds = get_current_seconds();
+	printf("current seconds %d\n" , time_seconds);
+	sleep(61);
+	time_seconds = get_current_seconds();
+	printf("current seconds %d\n" , time_seconds);
+	
 
 	sprintf(file_name , "%s" , argv[1]);
 	file_id = atoi(argv[2]);
