@@ -56,7 +56,8 @@ void vmsync_fini(const char * source_file_full_name, int file_id)
 }
 
 /* /tmp/sync/send/ */
-int vmsync_send(int fild_id, uint64_t offset , uint64_t len)
+//int vmsync_send(int fild_id, uint64_t offset , uint64_t len)
+int vmsync_send(int fild_id, uint32_t offset , uint32_t len)
 {
 	int			ret;
 	uint32_t		i;
@@ -64,6 +65,7 @@ int vmsync_send(int fild_id, uint64_t offset , uint64_t len)
 	uint32_t		end_blk_id;
 	char			file_name[512];
 
+	//print_debug("[file_id = %lu, offset = %lu, len = %lu] f_block_size = %d\n", fild_id, offset, len, f_block_size);
 	if (len == 0)
 		return ERROR_SYNC_OK;
 
@@ -76,9 +78,14 @@ int vmsync_send(int fild_id, uint64_t offset , uint64_t len)
 	if (!(len % f_block_size))
 		end_blk_id--;
 	
+	
+	//print_debug("start_blk_id = %lu, end_blk_id = %lu\n", start_blk_id, end_blk_id);
+	//print_debug("ready to lock file\n");
 	vmsync_file_lock(f_lock_fd);
+	//print_debug("lock file success\n");
 	for (i = start_blk_id; i <= end_blk_id; i++){
 		sprintf(file_name, "%s/send/%d/all+%llu", sync_work_dir, fild_id, i);
+		//print_debug("ready to create file:%s\n", file_name);
 		ret = vmsync_file_create(file_name);
 	}
 	vmsync_file_unlock(f_lock_fd);

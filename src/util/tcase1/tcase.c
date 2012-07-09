@@ -89,7 +89,7 @@ int do_fixed_size_test(int fd , __u32 file_size , __u32 file_id , __u32 block_si
 		return 0;
 	}
 	
-	printf("	INFO:	file id %d offset %d len %d\n" , file_id , offset , len);	
+	printf("	INFO:	file id %lu offset %lu len %lu\n" , file_id , offset , len);	
 	vmsync_send(file_id , offset , len);
 
 	return 0;
@@ -141,7 +141,7 @@ int main(int argc , char ** argv)
                 exit(0);
         }
 
-	srandom(1);
+	srandom(time(NULL));
 
 	if(loopcnt == 0){
 		while(1){

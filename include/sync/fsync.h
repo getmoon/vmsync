@@ -21,7 +21,8 @@ enum {
 
 extern int vmsync_init(const char * work_path , const char * source_file_full_name, int file_id, uint32_t block_size);
 extern void vmsync_fini(const char * source_file_full_name, int file_id);
-extern int vmsync_send(int fild_id, uint64_t offset , uint64_t len);
+//extern int vmsync_send(int fild_id, uint64_t offset , uint64_t len);
+extern int vmsync_send(int fild_id, uint32_t offset , uint32_t len);
 
 #endif
 
