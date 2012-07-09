@@ -42,7 +42,7 @@ int main(int argc, char ** argv)
 	printf("ret = %d\n", ret);
 	while (1);
 #endif
-	ret = vmsync_init("/opt/test_file", 4, 64);
+	ret = vmsync_init(DEFAULT_SYNC_WORK_DIR , "/opt/test_file", 4, 64);
 	printf("vmsync_init ret = %d\n", ret);
 	vmsync_send(4, 64, 257);
 	vmsync_fini("/opt/test_file", 4);

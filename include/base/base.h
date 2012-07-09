@@ -86,6 +86,21 @@ extern int vmsync_flock_set(int fd, int code);
 #define print_error(fmt , args...)\
 	fprintf(stderr , "ERROR: "fmt , ##args)
 
+#define isnotnumber(arg)	(is_number(arg) == 0)
+#define str_equal(str1,str2) ((strlen(str1) == strlen(str2)) && !memcmp( str1 , str2 , strlen(str1)))       
+#define str_unequal( str1 , str2 )      ((strlen(str1) != strlen(str2)) || memcmp( str1 , str2 , strlen(str1)))
+#define str_in2( str , str0 , str1 )    ( str_equal(str , str0) || str_equal(str , str1) )
+
+static inline int file_exist(char * filename)
+{
+	if (access(filename, F_OK)){
+		return 0;
+	}
+
+	return 1;
+}
+
+#define file_unexist(filename)	(file_exist(filename)==0)
 
 #endif
 

@@ -16,5 +16,6 @@ extern int config_init(char * config_file);
 extern void * do_mana_handler(void *arg);
 extern void * do_work_handler(void *arg);
 extern int remote_connect(char * serverip , unsigned short serverport);
+extern char            sync_work_dir[512];
 
 #endif//__SLAVE_PRIV_H__

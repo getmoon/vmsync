@@ -24,7 +24,7 @@
  * ./tcase {src_file} {file_id} {block_size}	
  *sudo ./tcase ./test.txt 1 4096 fixed 1
  */
-
+#include "fsync.h"
 #include "base.h"
 #include "msg.h"
 
@@ -129,7 +129,7 @@ int main(int argc , char ** argv)
 	sprintf(operate , "%s" , argv[4]);
 	loopcnt = atoi(argv[5]);
 
-	ret = vmsync_init(file_name , file_id , block_size);
+	ret = vmsync_init(DEFAULT_SYNC_WORK_DIR , file_name , file_id , block_size);
 	if(ret < 0){
 		printf("init vmsync library fail\n");
 		return 0;

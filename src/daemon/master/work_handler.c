@@ -191,8 +191,8 @@ void * do_work_handler(void *arg)
 	__u8					*msg_buff;
 	
 	
-	sprintf(file_lock_name, "%s/lock/%d.lck", SYNC_WORK_DIR, file_id);
-	sprintf(send_dir, "%s/send/%d/", SYNC_WORK_DIR, file_id);
+	sprintf(file_lock_name, "%s/lock/%d.lck", sync_work_dir, file_id);
+	sprintf(send_dir, "%s/send/%d/", sync_work_dir, file_id);
 	//source_file_fid = open(inst->filename, O_RDONLY | O_CREAT, 0666);
 	//if (source_file_fid < 0){
 	//	print_error("open %s error, thread exist\n", inst->filename);
