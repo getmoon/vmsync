@@ -125,9 +125,9 @@ int main(int argc , char ** argv)
 		
 	time_seconds = get_current_seconds();
 	printf("current seconds %d\n" , time_seconds);
-	sleep(61);
-	time_seconds = get_current_seconds();
-	printf("current seconds %d\n" , time_seconds);
+//	sleep(61);
+//	time_seconds = get_current_seconds();
+//	printf("current seconds %d\n" , time_seconds);
 	
 
 	sprintf(file_name , "%s" , argv[1]);
