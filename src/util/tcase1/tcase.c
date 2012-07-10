@@ -99,6 +99,7 @@ int do_fixed_size_test(int fd , __u32 file_size , __u32 file_id , __u32 block_si
 
 int do_enlarge_size_test(int fd , __u32 file_size , __u32 file_id , __u32 block_size)
 {
+	do_fixed_size_test(fd , file_size , file_id , block_size);
 	return 0;
 }
 
@@ -153,6 +154,10 @@ int main(int argc , char ** argv)
         }
 
 	srandom(time(NULL));
+
+	if(str_equal(operate , "enlarge"))
+		file_size += (10*1024*1024);	
+		
 
 	if(loopcnt == 0){
 		while(1){
