@@ -193,6 +193,7 @@ void * do_work_handler(void *arg)
 	int					last_handle_time;
 	int					curr_handle_time;
 	
+	signal(SIGPIPE,SIG_IGN);
 	
 	sprintf(send_dir, "%s/send/%d/", sync_work_dir, file_id);
 	if (access(send_dir, F_OK))

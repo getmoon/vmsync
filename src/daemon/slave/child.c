@@ -81,7 +81,7 @@ void * do_child(void *arg)
 next_msg_test:
 		offset += len;
 		if(offset < sizeof(msg_data_t)){
-			print_debug("not enough for msg head, offset = %d\n", offset);
+			//print_debug("not enough for msg head, offset = %d\n", offset);
 			continue;
 		}
 		
@@ -91,7 +91,7 @@ next_msg_test:
 		msg_datalen = ntohl(msg->datalen);
 
 		if(offset < (sizeof(msg_data_t) + msg_datalen)){
-			print_debug("not enough for msg head and data\n");
+			//print_debug("not enough for msg head and data\n");
 			continue;
 		}
 

@@ -165,7 +165,7 @@ int main(int argc , char ** argv)
 				printf("error here\n");
 			}
 			i++;
-			sleep(100);
+			usleep(100);
 		}
 
 	}else{

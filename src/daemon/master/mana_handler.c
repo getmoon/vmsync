@@ -20,6 +20,8 @@ void * do_mana_handler(void *arg)
 	int				ret;
 	struct remote_ip_t *		remote;
 	
+	signal(SIGPIPE,SIG_IGN);
+
 	for( i = 0 ; i < inst->ipcnt ; i++){
 		remote = inst->remoteip + i;
 		ret = remote_connect(remote->ipname , BACKUP_SVR_PORT);		
