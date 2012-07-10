@@ -1,5 +1,5 @@
 
-
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -83,6 +83,7 @@ int do_fixed_size_test(int fd , __u32 file_size , __u32 file_id , __u32 block_si
 	}
 
 	lseek64(fd , offset , SEEK_SET);
+	signal(SIGINT, SIG_IGN);
 	vm_file_lock(0, offset, len);
 	ret = write(fd , buffer , len);
 	if(ret < 0){
@@ -93,7 +94,7 @@ int do_fixed_size_test(int fd , __u32 file_size , __u32 file_id , __u32 block_si
 	printf("	INFO:	file id %u offset %llu len %llu\n" , file_id , offset , len);	
 	vmsync_send(file_id , offset , len);
 	vm_file_unlock(0, offset, len);
-
+	signal(SIGINT, SIG_DFL);
 	return 0;
 }
 
