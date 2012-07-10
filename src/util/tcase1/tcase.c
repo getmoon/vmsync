@@ -61,8 +61,8 @@ char		buffer[64*1024*1024];
 
 int do_fixed_size_test(int fd , __u32 file_size , __u32 file_id , __u32 block_size)
 {
-	__u32		offset;
-	__u32		len = block_size;
+	__u64		offset;
+	__u64		len = block_size;
 	int		ret;
 	__u32		maxlen;
 	__u32		i;
@@ -74,7 +74,7 @@ int do_fixed_size_test(int fd , __u32 file_size , __u32 file_id , __u32 block_si
 	len = len % maxlen;
 
 	if((offset + len) > file_size){
-		printf("buf here , error offset %d with len %d\n" , offset , len);
+		printf("buf here , error offset %lld with len %lld\n" , offset , len);
 		return 0;
 	}
 
@@ -82,7 +82,7 @@ int do_fixed_size_test(int fd , __u32 file_size , __u32 file_id , __u32 block_si
 		buffer[i] = random()&0xff;
 	}
 
-	lseek(fd , offset , SEEK_SET);
+	lseek64(fd , offset , SEEK_SET);
 	vm_file_lock(0, offset, len);
 	ret = write(fd , buffer , len);
 	if(ret < 0){
@@ -90,7 +90,7 @@ int do_fixed_size_test(int fd , __u32 file_size , __u32 file_id , __u32 block_si
 		return 0;
 	}
 	
-	printf("	INFO:	file id %lu offset %lu len %lu\n" , file_id , offset , len);	
+	printf("	INFO:	file id %u offset %llu len %llu\n" , file_id , offset , len);	
 	vmsync_send(file_id , offset , len);
 	vm_file_unlock(0, offset, len);
 
