@@ -135,7 +135,7 @@ int main(int argc , char ** argv)
 
 	sprintf(file_name , "%s" , argv[1]);
 	file_id = atoi(argv[2]);
-	block_size = atoi(argv[3]);
+	block_size = DEFAULT_BLOCK_SIZE;
 	file_size = get_file_len(file_name);
 	sprintf(operate , "%s" , argv[4]);
 	loopcnt = atoi(argv[5]);
