@@ -1,0 +1,10 @@
+./tcase  /opt/sync/data/master/testfile0 0 4096 fixed 1000 &
+./tcase  /opt/sync/data/master/testfile1 1 4096 fixed 1000 &
+./tcase  /opt/sync/data/master/testfile2 2 4096 fixed 1000 &
+./tcase  /opt/sync/data/master/testfile3 3 4096 fixed 1000 &
+./tcase  /opt/sync/data/master/testfile4 4 4096 fixed 1000 &
+./tcase  /opt/sync/data/master/testfile5 5 4096 fixed 1000 &
+./tcase  /opt/sync/data/master/testfile6 6 4096 fixed 1000 &
+./tcase  /opt/sync/data/master/testfile7 7 4096 fixed 1000 &
+./tcase  /opt/sync/data/master/testfile8 8 4096 fixed 1000 &
+./tcase  /opt/sync/data/master/testfile9 9 4096 fixed 1000 &
