@@ -8,6 +8,7 @@
 #include <sys/uio.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <signal.h>
 
 #include "priv.h"
 #include "instance.h"

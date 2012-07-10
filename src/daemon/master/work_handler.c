@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <dirent.h>
+#include <signal.h>
 
 #include "base.h"
 #include "msg.h"
