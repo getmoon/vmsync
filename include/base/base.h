@@ -17,6 +17,7 @@
 #define TRUE	1
 
 #define BACKUP_SVR_PORT	9505
+#define LOCK_HASH_SIZE 1024
 
 typedef unsigned char __u8;
 typedef unsigned short  __u16;

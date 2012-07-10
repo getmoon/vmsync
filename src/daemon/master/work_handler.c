@@ -176,7 +176,7 @@ void * do_work_handler(void *arg)
 {
 	struct config_instance_t * inst = (struct config_instance_t *)arg;
 	int					i;
-	int					lock_fd;
+	int					lock_fd[LOCK_HASH_SIZE];
 	int					file_id = inst->fileid;
 	char					* file_name = inst->filename;
 	int					source_file_fid;
@@ -193,7 +193,6 @@ void * do_work_handler(void *arg)
 	int					curr_handle_time;
 	
 	
-	sprintf(file_lock_name, "%s/lock/%d.lck", sync_work_dir, file_id);
 	sprintf(send_dir, "%s/send/%d/", sync_work_dir, file_id);
 	//source_file_fid = open(inst->filename, O_RDONLY | O_CREAT, 0666);
 	//if (source_file_fid < 0){
@@ -210,7 +209,10 @@ void * do_work_handler(void *arg)
 		return NULL;
 	}
 
-	lock_fd = open(file_lock_name, O_RDWR | O_CREAT , 0666);	
+	for (i = 0; i < LOCK_HASH_SIZE; i++){
+		sprintf(file_lock_name, "%s/lock/%d+%d.lck", sync_work_dir, file_id, i);
+		lock_fd[i] = open(file_lock_name, O_RDWR | O_CREAT , 0666);	
+	}
 
 	last_handle_time = get_current_seconds();
 	while (1){
@@ -221,18 +223,20 @@ void * do_work_handler(void *arg)
 		}
 
 		last_handle_time = get_current_seconds();
-		vmsync_file_lock(lock_fd);
-
 		dir_head = load_dir(send_dir);
 		if (!dir_head){			
-			vmsync_file_unlock(lock_fd);
 			usleep(0);
 			continue;
 		}
+
 		source_file_fid = open(inst->filename, O_RDONLY | O_CREAT, 0666);
 		for_each_entry_dir(dir_curr, dir_head){
+			vmsync_file_lock(lock_fd[dir_curr->blockid % LOCK_HASH_SIZE]);
+			//vmsync_file_lock(lock_fd[0]);
 			msg = load_msg(source_file_fid, MSG_TYPE_SYNC_DATA, file_id, dir_curr->blockid, block_size, msg_buff);
 			if (!msg){
+				vmsync_file_unlock(lock_fd[dir_curr->blockid % LOCK_HASH_SIZE]);
+				//vmsync_file_unlock(lock_fd[0]);
 				continue;
 			}
 				
@@ -280,16 +284,18 @@ void * do_work_handler(void *arg)
 				}
 			}
 #endif
+			vmsync_file_unlock(lock_fd[dir_curr->blockid % LOCK_HASH_SIZE]);
+			//vmsync_file_unlock(lock_fd[0]);
 			//release_msg(msg);
 		}
 		close(source_file_fid);
 		release_dir(dir_head);
 		// remove files
 		// To All, just delete it, To signal host, if send success, delete it. if NOT, do not delete it.
-		vmsync_file_unlock(lock_fd);
 	}
 
-	close(lock_fd);
+	for (i = 0; i < LOCK_HASH_SIZE; i++)
+		close(lock_fd[i]);
 	free(msg_buff);
 
 

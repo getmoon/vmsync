@@ -83,6 +83,7 @@ int do_fixed_size_test(int fd , __u32 file_size , __u32 file_id , __u32 block_si
 	}
 
 	lseek(fd , offset , SEEK_SET);
+	vm_file_lock(0, offset, len);
 	ret = write(fd , buffer , len);
 	if(ret < 0){
 		printf("write file fail\n");
@@ -91,6 +92,7 @@ int do_fixed_size_test(int fd , __u32 file_size , __u32 file_id , __u32 block_si
 	
 	printf("	INFO:	file id %lu offset %lu len %lu\n" , file_id , offset , len);	
 	vmsync_send(file_id , offset , len);
+	vm_file_unlock(0, offset, len);
 
 	return 0;
 }
@@ -143,6 +145,7 @@ int main(int argc , char ** argv)
 		return 0;
 	}
 
+	printf("file_name = %s\n", file_name);
         fd = open(file_name , O_RDWR);
         if(fd < 0){
                 printf("open source file fail\n");
@@ -162,7 +165,7 @@ int main(int argc , char ** argv)
 				printf("error here\n");
 			}
 			i++;
-			sleep(1);
+			sleep(100);
 		}
 
 	}else{
@@ -175,7 +178,7 @@ int main(int argc , char ** argv)
 			}else{
 				printf("error here\n");
 			}
-			sleep(1);
+			usleep(100);
 		}
 	}
 		

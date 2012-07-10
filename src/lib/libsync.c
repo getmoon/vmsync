@@ -7,7 +7,8 @@
  */ 
 
 static uint32_t f_block_size;
-static int f_lock_fd = -1;
+//static int f_lock_fd = -1;
+static int f_lock_fd[LOCK_HASH_SIZE] = {-1, };
 char	sync_work_dir[512];
 
 int vmsync_init(const char * work_path , const char * source_file_full_name, int file_id, uint32_t block_size)
@@ -16,6 +17,7 @@ int vmsync_init(const char * work_path , const char * source_file_full_name, int
 	char	file_lock_name[128] = "";
 	char	dir_name[128] = "";
 	int	fd;
+	int	i;
 
 	sprintf(sync_work_dir , "%s" , work_path);
 
@@ -27,11 +29,13 @@ int vmsync_init(const char * work_path , const char * source_file_full_name, int
 
 	f_block_size = block_size;
 	
-	sprintf(file_lock_name, "%s/lock/%d.lck", sync_work_dir , file_id);
-	fd = open(file_lock_name, O_RDWR | O_CREAT, 0666);
-	if (fd < 0){
-		print_error("Create lock file %s error" , file_lock_name);
-		return fd;
+	for (i = 0; i < LOCK_HASH_SIZE; i++){
+		sprintf(file_lock_name, "%s/lock/%d+%d.lck", sync_work_dir , file_id, i);
+		f_lock_fd[i] = open(file_lock_name, O_RDWR | O_CREAT, 0666);
+		if (fd < 0){
+			print_error("Create lock file %s error" , file_lock_name);
+			return fd;
+		}
 	}
 
 	sprintf(dir_name, "%s/send/%d/", sync_work_dir, file_id);
@@ -42,21 +46,62 @@ int vmsync_init(const char * work_path , const char * source_file_full_name, int
 			return ret;
 		}
 	}
-	f_lock_fd = fd;
+
 	return ERROR_SYNC_OK;
 }
 
 void vmsync_fini(const char * source_file_full_name, int file_id)
 {
-	if ( f_lock_fd != -1 ){
-		close(f_lock_fd);
-		f_lock_fd = -1;
+	int	i = 0;
+	for (i = 0; i < LOCK_HASH_SIZE; i++)
+	if ( f_lock_fd[i] != -1 ){
+		close(f_lock_fd[i]);
+		f_lock_fd[i] = -1;
 	}
 	return ;
 }
 
 /* /tmp/sync/send/ */
 //int vmsync_send(int fild_id, uint64_t offset , uint64_t len)
+
+int vm_file_lock(int fild_id, uint32_t offset , uint32_t len)
+{
+	uint32_t		i;
+	uint32_t		start_blk_id;
+	uint32_t		end_blk_id;
+	
+	start_blk_id = offset / f_block_size;
+	len += (offset % f_block_size);
+
+	end_blk_id = start_blk_id + (len / f_block_size);
+
+	/* A complete block-edge */
+	if (!(len % f_block_size))
+		end_blk_id--;
+
+	for (i = start_blk_id; i <= end_blk_id; i++)
+		vmsync_file_lock(f_lock_fd[i%LOCK_HASH_SIZE]);
+}
+
+int vm_file_unlock(int fild_id, uint32_t offset , uint32_t len)
+{
+	uint32_t		i;
+	uint32_t		start_blk_id;
+	uint32_t		end_blk_id;
+	
+	start_blk_id = offset / f_block_size;
+	len += (offset % f_block_size);
+
+	end_blk_id = start_blk_id + (len / f_block_size);
+
+	/* A complete block-edge */
+	if (!(len % f_block_size))
+		end_blk_id--;
+
+	for (i = start_blk_id; i <= end_blk_id; i++)
+		vmsync_file_unlock(f_lock_fd[i%LOCK_HASH_SIZE]);
+}
+
 int vmsync_send(int fild_id, uint32_t offset , uint32_t len)
 {
 	int			ret;
@@ -79,16 +124,13 @@ int vmsync_send(int fild_id, uint32_t offset , uint32_t len)
 		end_blk_id--;
 	
 	
-	//print_debug("start_blk_id = %lu, end_blk_id = %lu\n", start_blk_id, end_blk_id);
-	//print_debug("ready to lock file\n");
-	vmsync_file_lock(f_lock_fd);
-	//print_debug("lock file success\n");
 	for (i = start_blk_id; i <= end_blk_id; i++){
 		sprintf(file_name, "%s/send/%d/all+%lu", sync_work_dir, fild_id, i);
-		//print_debug("ready to create file:%s\n", file_name);
+		//vmsync_file_lock(f_lock_fd[i%LOCK_HASH_SIZE]);
+		//vmsync_file_lock(f_lock_fd[0]);
 		ret = vmsync_file_create(file_name);
+		//vmsync_file_unlock(f_lock_fd[0]);
 	}
-	vmsync_file_unlock(f_lock_fd);
 
 	return ret;
 }
