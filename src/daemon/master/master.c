@@ -16,10 +16,11 @@
 int		block_size = 4096;
 char    	sync_work_dir[512];
 int		sync_period = 300;
+char		config_file[256];
 
 void usage(void)
 {
-	printf("./daemon -p {work_path} -t {sync_period}\n");
+	printf("./daemon -p {work_path} -t {sync_period} -c {config_file}\n");
 }
 
 #if 1
@@ -29,11 +30,12 @@ int main(int argc , char ** argv)
 	int				i;
 	struct config_instance_t *	inst;
 	
-	if( 	argc != 5 ||
+	if( 	argc != 7 ||
 		str_unequal(argv[1] , "-p") ||
 		file_unexist(argv[2]) ||
 		str_unequal(argv[3] , "-t") ||
-		isnotnumber(argv[4]) 
+		isnotnumber(argv[4])  ||
+		str_unequal(argv[5] , "-c") 
 	){
 		usage();
 		exit(0);
@@ -41,6 +43,7 @@ int main(int argc , char ** argv)
 
 	sprintf(sync_work_dir , "%s" , argv[2]);
 	sync_period = atoi(argv[4]);
+	sprintf(config_file , "%s" , argv[6]);
 
 
 	ret = config_init("/opt/sync/cfg/master_cfg.ini");

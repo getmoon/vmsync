@@ -12,13 +12,28 @@
 #include "priv.h"
 
 int		block_size = 4096;
+char		config_file[256];
+
+void usage(void)
+{
+	print_info("./master -c {config_file}");
+}
 
 int main(int argc , char ** argv)
 {
 	int 			listenfd;
 	int			ret;
 
-	ret = config_init("/opt/sync/cfg/slave_cfg.ini");
+	if(argc != 3 ||
+		str_equal(argv[1] , "-c") 
+	){
+		usage();
+		exit(0);
+	}
+
+	sprintf(config_file , "%s" , argv[2]);
+
+	ret = config_init(config_file);
 	if(ret < 0){
 		print_error("config file init fail\n");
 		exit(0);
