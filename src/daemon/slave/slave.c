@@ -31,6 +31,7 @@ int main(int argc , char ** argv)
 		exit(0);
 	}
 
+	resource_init();
 	sprintf(config_file , "%s" , argv[2]);
 
 	ret = config_init(config_file);

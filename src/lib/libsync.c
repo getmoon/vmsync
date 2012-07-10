@@ -7,7 +7,6 @@
  */ 
 
 static uint32_t f_block_size;
-//static int f_lock_fd = -1;
 static int f_lock_fd[LOCK_HASH_SIZE] = {-1, };
 char	sync_work_dir[512];
 
@@ -19,6 +18,8 @@ int vmsync_init(const char * work_path , const char * source_file_full_name, int
 	int	fd;
 	int	i;
 
+	resource_init();
+
 	sprintf(sync_work_dir , "%s" , work_path);
 
 	if (block_size == 0 || block_size > MB(64))
@@ -26,6 +27,26 @@ int vmsync_init(const char * work_path , const char * source_file_full_name, int
 
 	if (file_id < 0)
 		return -ERROR_SYNC_FID;
+
+	memset(dir_name, 0, 128);
+	sprintf(dir_name, "%s/lock/", sync_work_dir);
+	if (access(dir_name, F_OK)){
+		ret = mkdir(dir_name, 0777);
+		if (ret < 0){
+			print_error("Create directory %s error" , dir_name);
+			return ret;
+		}
+	}
+
+	memset(dir_name, 0, 128);
+	sprintf(dir_name, "%s/send/", sync_work_dir);
+	if (access(dir_name, F_OK)){
+		ret = mkdir(dir_name, 0777);
+		if (ret < 0){
+			print_error("Create directory %s error" , dir_name);
+			return ret;
+		}
+	}
 
 	f_block_size = block_size;
 	

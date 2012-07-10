@@ -141,7 +141,7 @@ static msg_data_t * load_msg(int fd, __u32 type, __u32 file_id, __u32 blockid, _
 	msg->fileid = htonl(file_id);
 	msg->blockid = htonl(blockid);
 
-	if (lseek64(fd, blockid * blk_len, SEEK_SET) != (blockid * blk_len)){
+	if (lseek64(fd, offset, SEEK_SET) != offset){
 		print_error("lseek error\n");
 		return NULL;
 	}

@@ -9,6 +9,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <fcntl.h>
+#include <sys/resource.h>
 
 /*
  *
@@ -100,6 +101,14 @@ static inline int file_exist(char * filename)
 	}
 
 	return 1;
+}
+
+static int resource_init()
+{
+        struct rlimit limit;            
+        limit.rlim_cur = 65535;
+        limit.rlim_max = 65535;
+        setrlimit(RLIMIT_OFILE, &limit);
 }
 
 #define file_unexist(filename)	(file_exist(filename)==0)
