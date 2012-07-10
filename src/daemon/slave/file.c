@@ -23,7 +23,7 @@ int msg_handler(struct pthread_attr_t * pattr ,
 		__u8 * msg_data , 
 		__u32 msg_datalen)
 {
-	int		offset;
+	__u64		offset;
 	int		ret;
 
 	if(msg_type != MSG_TYPE_SYNC_DATA){
@@ -32,9 +32,9 @@ int msg_handler(struct pthread_attr_t * pattr ,
 	}
 
 	offset = msg_blockid * block_size;
-	ret = lseek(cft->fd , offset , SEEK_SET);
+	ret = lseek64(cft->fd , offset , SEEK_SET);
 	if(ret < 0){
-		print_error("lseek file fail offset %d\n" , offset);
+		print_error("lseek file fail offset %llu\n" , offset);
 		return -1;
 	}
 
