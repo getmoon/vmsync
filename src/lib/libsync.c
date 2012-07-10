@@ -85,11 +85,11 @@ void vmsync_fini(const char * source_file_full_name, int file_id)
 /* /tmp/sync/send/ */
 //int vmsync_send(int fild_id, uint64_t offset , uint64_t len)
 
-int vm_file_lock(int fild_id, uint32_t offset , uint32_t len)
+int vm_file_lock(int fild_id, uint64_t offset , uint64_t len)
 {
-	uint32_t		i;
-	uint32_t		start_blk_id;
-	uint32_t		end_blk_id;
+	uint64_t		i;
+	uint64_t		start_blk_id;
+	uint64_t		end_blk_id;
 	
 	start_blk_id = offset / f_block_size;
 	len += (offset % f_block_size);
@@ -104,11 +104,11 @@ int vm_file_lock(int fild_id, uint32_t offset , uint32_t len)
 		vmsync_file_lock(f_lock_fd[i%LOCK_HASH_SIZE]);
 }
 
-int vm_file_unlock(int fild_id, uint32_t offset , uint32_t len)
+int vm_file_unlock(int fild_id, uint64_t offset , uint64_t len)
 {
-	uint32_t		i;
-	uint32_t		start_blk_id;
-	uint32_t		end_blk_id;
+	uint64_t		i;
+	uint64_t		start_blk_id;
+	uint64_t		end_blk_id;
 	
 	start_blk_id = offset / f_block_size;
 	len += (offset % f_block_size);

@@ -239,24 +239,6 @@ void * do_work_handler(void *arg)
 				continue;
 			}
 				
-#if (00)
-			for (i = 0; i < inst->ipcnt; i++){
-				rip = inst->remoteip + i;
-				if (rip->sockfd != -1 && (dir_curr->broadcast == 0xffffffff || dir_curr->broadcast == rip->ip)){
-					ret = send_msg(msg, rip);
-					if (ret < 0){
-						rip->sockfd = -1;
-						sprintf(record_signle_name, "%s/sgl+%d+%s", send_dir, dir_curr->blockid, rip->ipname);
-						vmsync_file_create(record_signle_name);
-					}
-				}
-			}
-
-			if ( (dir_curr->broadcast == 0xffffffff) || 
-					( (dir_curr->broadcast != 0xffffffff) && (ret == 0))){
-				vmsync_file_remove(dir_curr->filename);
-			}
-#else
 			if (dir_curr->broadcast == 0xffffffff){
 				for (i = 0; i < inst->ipcnt; i++){
 					rip = inst->remoteip + i;
@@ -282,7 +264,6 @@ void * do_work_handler(void *arg)
 					}
 				}
 			}
-#endif
 			vmsync_file_unlock(lock_fd[dir_curr->blockid % LOCK_HASH_SIZE]);
 			//release_msg(msg);
 		}
