@@ -134,13 +134,14 @@ static msg_data_t * load_msg(int fd, __u32 type, __u32 file_id, __u32 blockid, _
 {
 	int	size = sizeof(msg_data_t) + blk_len;
 	int	read_size;
+	uint64_t offset = (uint64_t)(blockid) * (uint64_t)(blk_len);
 	msg_data_t * msg = (msg_data_t*)msg_buffer;
 
 	msg->type = htonl(type);
 	msg->fileid = htonl(file_id);
 	msg->blockid = htonl(blockid);
 
-	if (lseek(fd, blockid * blk_len, SEEK_SET) != (blockid * blk_len)){
+	if (lseek64(fd, blockid * blk_len, SEEK_SET) != (blockid * blk_len)){
 		print_error("lseek error\n");
 		return NULL;
 	}
@@ -194,12 +195,6 @@ void * do_work_handler(void *arg)
 	
 	
 	sprintf(send_dir, "%s/send/%d/", sync_work_dir, file_id);
-	//source_file_fid = open(inst->filename, O_RDONLY | O_CREAT, 0666);
-	//if (source_file_fid < 0){
-	//	print_error("open %s error, thread exist\n", inst->filename);
-	//	return NULL;
-	//}
-
 	if (access(send_dir, F_OK))
 		mkdir(send_dir, 0777);
 
@@ -236,11 +231,9 @@ void * do_work_handler(void *arg)
 		source_file_fid = open(inst->filename, O_RDONLY | O_CREAT, 0666);
 		for_each_entry_dir(dir_curr, dir_head){
 			vmsync_file_lock(lock_fd[dir_curr->blockid % LOCK_HASH_SIZE]);
-			//vmsync_file_lock(lock_fd[0]);
 			msg = load_msg(source_file_fid, MSG_TYPE_SYNC_DATA, file_id, dir_curr->blockid, block_size, msg_buff);
 			if (!msg){
 				vmsync_file_unlock(lock_fd[dir_curr->blockid % LOCK_HASH_SIZE]);
-				//vmsync_file_unlock(lock_fd[0]);
 				continue;
 			}
 				
@@ -289,13 +282,10 @@ void * do_work_handler(void *arg)
 			}
 #endif
 			vmsync_file_unlock(lock_fd[dir_curr->blockid % LOCK_HASH_SIZE]);
-			//vmsync_file_unlock(lock_fd[0]);
 			//release_msg(msg);
 		}
 		close(source_file_fid);
 		release_dir(dir_head);
-		// remove files
-		// To All, just delete it, To signal host, if send success, delete it. if NOT, do not delete it.
 	}
 
 	for (i = 0; i < LOCK_HASH_SIZE; i++)
