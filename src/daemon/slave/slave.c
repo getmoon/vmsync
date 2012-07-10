@@ -16,7 +16,7 @@ char		config_file[256];
 
 void usage(void)
 {
-	print_info("./master -c {config_file}");
+	print_info("./slave -c {config_file}\n");
 }
 
 int main(int argc , char ** argv)
@@ -25,7 +25,7 @@ int main(int argc , char ** argv)
 	int			ret;
 
 	if(argc != 3 ||
-		str_equal(argv[1] , "-c") 
+		str_unequal(argv[1] , "-c") 
 	){
 		usage();
 		exit(0);
