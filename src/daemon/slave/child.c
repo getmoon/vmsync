@@ -78,6 +78,7 @@ void * do_child(void *arg)
 			goto backoff;
 		}
 
+next_msg_test:
 		offset += len;
 		if(offset < sizeof(msg_data_t)){
 			print_debug("not enough for msg head, offset = %d\n", offset);
@@ -110,6 +111,8 @@ void * do_child(void *arg)
 		offset -= msg_totlen;
 		if(offset > 0){
 			memcpy((void*)msg , (void*)msg + msg_totlen , offset);
+			len = 0;
+			goto next_msg_test;
 		}
 	}
 
