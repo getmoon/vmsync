@@ -32,7 +32,7 @@ int vmsync_init(const char * work_path , const char * source_file_full_name, int
 	for (i = 0; i < LOCK_HASH_SIZE; i++){
 		sprintf(file_lock_name, "%s/lock/%d+%d.lck", sync_work_dir , file_id, i);
 		f_lock_fd[i] = open(file_lock_name, O_RDWR | O_CREAT, 0666);
-		if (fd < 0){
+		if (f_lock_fd[i] < 0){
 			print_error("Create lock file %s error" , file_lock_name);
 			return fd;
 		}

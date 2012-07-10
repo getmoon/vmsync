@@ -212,6 +212,10 @@ void * do_work_handler(void *arg)
 	for (i = 0; i < LOCK_HASH_SIZE; i++){
 		sprintf(file_lock_name, "%s/lock/%d+%d.lck", sync_work_dir, file_id, i);
 		lock_fd[i] = open(file_lock_name, O_RDWR | O_CREAT , 0666);	
+		if (lock_fd[i] < 0 ) {
+			printf("open file fails %s\n", file_lock_name);
+			exit(0);
+		}
 	}
 
 	last_handle_time = get_current_seconds();
