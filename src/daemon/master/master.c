@@ -13,7 +13,7 @@
 #include "priv.h"
 #include "instance.h"
 
-int		block_size = 4096;
+int		block_size = DEFAULT_BLOCK_SIZE;
 char    	sync_work_dir[512];
 int		sync_period = 300;
 char		config_file[256];

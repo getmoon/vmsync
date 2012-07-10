@@ -11,7 +11,7 @@
 
 #include "priv.h"
 
-int		block_size = 4096;
+int		block_size = DEFAULT_BLOCK_SIZE;
 char		config_file[256];
 
 void usage(void)
