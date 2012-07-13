@@ -19,6 +19,8 @@ struct config_file_t{
 extern struct pthread_attr_t * slave_thread_alloc(void);
 extern int slave_socket_init(void);
 extern void slave_thread_fini(void);
+extern int slave_thread_init(void);
+extern void slave_thread_fini(void);
 
 extern int do_accept(int listenfd);
 extern void * do_child(void *arg);

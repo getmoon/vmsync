@@ -16,7 +16,6 @@ extern int vmsync_file_unlock(const char * file_name);
 int main(int argc, char ** argv)
 {
 	int	ret;
-	int	fd;
 
 #if 0
 	ret = vmsync_file_create(argv[1]);

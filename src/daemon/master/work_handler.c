@@ -1,16 +1,4 @@
 #define _REENTRANT
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <string.h>
-#include <sys/uio.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <dirent.h>
-#include <signal.h>
-
 #include "base.h"
 #include "msg.h"
 #include "fsync.h"
@@ -78,14 +66,14 @@ static struct dir_instance_t * load_dir(const char * dir_name)
 	struct dir_instance_t * dir_head = NULL;
 	struct dir_instance_t * curr = NULL;
 	struct dir_instance_t * prev = NULL;
-	DIR 					*sys_dir;
-	struct dirent   		*sys_elem;
+	DIR 			*sys_dir;
+	struct dirent   	*sys_elem;
 
 	sys_dir = opendir(dir_name);
 	if (!sys_dir)
 		return NULL;
 
-	while (sys_elem = readdir(sys_dir)){
+	while ((sys_elem = readdir(sys_dir)) != NULL){
 		if (sys_elem->d_type == DT_REG){	// regular files
 			curr = (struct dir_instance_t*)malloc(sizeof(struct dir_instance_t));
 			sprintf(curr->filename, "%s%s", dir_name, sys_elem->d_name);
@@ -120,20 +108,8 @@ static void release_dir(struct dir_instance_t * head)
 	}
 }
 
-static void dump_data(__u8 *data, int size)
-{
-	int	i;
-
-	printf("[ ");
-	for (i = 0; i < size; i++){
-		printf("%02X ", data[i]);
-	}
-	printf("]\n");
-}
-
 static msg_data_t * load_msg(int fd, __u32 type, __u32 file_id, __u32 blockid, __u32 blk_len, __u8 * msg_buffer)
 {
-	int	size = sizeof(msg_data_t) + blk_len;
 	int	read_size;
 	uint64_t offset = (uint64_t)(blockid) * (uint64_t)(blk_len);
 	msg_data_t * msg = (msg_data_t*)msg_buffer;
@@ -157,21 +133,11 @@ static int send_msg(msg_data_t *msg, struct remote_ip_t * rip)
 {
 	int	ret;
 
-	//print_debug("Send %d bytes to %s\n", msg->datalen, rip->ipname);
-	//print_debug("msg->fileid = %d\n", ntohl(msg->fileid));
-	//print_debug("msg->blockid = %d\n", ntohl(msg->blockid));
-	//print_debug("msg->datalen = %d\n", ntohl(msg->datalen));
 	ret = write(rip->sockfd, /*msg->data*/ (char*)msg, sizeof(msg_data_t) + ntohl(msg->datalen));
 	if (ret <= 0)
 		return -1;
 
-	//dump_data(msg->data, ntohl(msg->datalen) > 64 ? 64 : ntohl(msg->datalen));
 	return 0;
-}
-
-static void release_msg(msg_data_t *msg)
-{
-	//if (msg) free(msg);
 }
 
 void * do_work_handler(void *arg)
@@ -180,7 +146,6 @@ void * do_work_handler(void *arg)
 	int					i;
 	int					lock_fd[LOCK_HASH_SIZE];
 	int					file_id = inst->fileid;
-	char					* file_name = inst->filename;
 	int					source_file_fid;
 	int					ret;
 	char					send_dir[512] = "";
@@ -265,7 +230,6 @@ void * do_work_handler(void *arg)
 				}
 			}
 			vmsync_file_unlock(lock_fd[dir_curr->blockid % LOCK_HASH_SIZE]);
-			//release_msg(msg);
 		}
 		close(source_file_fid);
 		release_dir(dir_head);

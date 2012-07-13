@@ -1,14 +1,5 @@
 #define _REENTRANT
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <string.h>
-#include <sys/uio.h>
-#include <unistd.h>
-#include <pthread.h>
-
+#include "base.h"
 #include "priv.h"
 
 int do_accept(int listenfd)
@@ -16,12 +7,11 @@ int do_accept(int listenfd)
 	int	 		newsockfd;
 	int			clilen;
 	struct sockaddr_in 	cli_addr;
-	int			ret;
 	struct pthread_attr_t * pattr;
 
 	for(;;){
 		clilen = sizeof(cli_addr);
-		newsockfd = accept(listenfd, (struct sockaddr *) &cli_addr, &clilen);
+		newsockfd = accept(listenfd, (struct sockaddr *) &cli_addr, (socklen_t*)&clilen);
 		if(newsockfd < 0){
 			print_error("server: accept error\n");
 			exit(0);

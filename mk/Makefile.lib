@@ -3,6 +3,8 @@
 INCLUDE += -I$(SYNC_TOP_SRC)/include/base/
 INCLUDE += -I$(SYNC_TOP_SRC)/include/sync/
 
+C_FLAGS += -Wall -Werror
+
 all: $(LIB) $(DLL)
 
 .c.o:

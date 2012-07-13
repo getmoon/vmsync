@@ -85,7 +85,7 @@ void vmsync_fini(const char * source_file_full_name, int file_id)
 /* /tmp/sync/send/ */
 //int vmsync_send(int fild_id, uint64_t offset , uint64_t len)
 
-int vm_file_lock(int fild_id, uint64_t offset , uint64_t len)
+int vmsync_lock(int fild_id, uint64_t offset , uint64_t len)
 {
 	uint64_t		i;
 	uint64_t		start_blk_id;
@@ -102,9 +102,11 @@ int vm_file_lock(int fild_id, uint64_t offset , uint64_t len)
 
 	for (i = start_blk_id; i <= end_blk_id; i++)
 		vmsync_file_lock(f_lock_fd[i%LOCK_HASH_SIZE]);
+
+	return 0;
 }
 
-int vm_file_unlock(int fild_id, uint64_t offset , uint64_t len)
+void vmsync_unlock(int fild_id, uint64_t offset , uint64_t len)
 {
 	uint64_t		i;
 	uint64_t		start_blk_id;
@@ -121,6 +123,8 @@ int vm_file_unlock(int fild_id, uint64_t offset , uint64_t len)
 
 	for (i = start_blk_id; i <= end_blk_id; i++)
 		vmsync_file_unlock(f_lock_fd[i%LOCK_HASH_SIZE]);
+
+	return ;
 }
 
 int vmsync_send(int fild_id, uint64_t offset , uint64_t len)
@@ -146,7 +150,6 @@ int vmsync_send(int fild_id, uint64_t offset , uint64_t len)
 	
 	for (i = start_blk_id; i <= end_blk_id; i++){
 		sprintf(file_name, "%s/send/%d/all+%llu", sync_work_dir, fild_id, i);
-		//print_debug("ready to create file:%s\n", file_name);
 		ret = vmsync_file_create(file_name);
 	}
 

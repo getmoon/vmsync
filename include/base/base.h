@@ -1,15 +1,27 @@
 #ifndef __BASE_H__
 #define __BASE_H__
 
+#define _LARGEFILE64_SOURCE
+#define __USE_FILE_OFFSET64
+#define __USE_LARGEFILE64
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <ctype.h>
 #include <errno.h>
 #include <sys/types.h>
+#include <sys/types.h>
 #include <sys/socket.h>
+#include <arpa/inet.h>
+#include <sys/stat.h>
+#include <sys/uio.h>
 #include <netinet/in.h>
 #include <fcntl.h>
 #include <sys/resource.h>
+#include <dirent.h>
+#include <pthread.h>
+#include <signal.h>
 
 /*
  *
@@ -103,17 +115,20 @@ static inline int file_exist(char * filename)
 	return 1;
 }
 
-static int resource_init()
+static inline int resource_init()
 {
         struct rlimit limit;            
         limit.rlim_cur = 65535;
         limit.rlim_max = 65535;
         setrlimit(RLIMIT_OFILE, &limit);
+	return 0;
 }
 
 #define file_unexist(filename)	(file_exist(filename)==0)
 
 extern int get_current_seconds(void);
+extern int parse_u32(char *arg, uint32_t *num);
+extern int parse_ip(char *arg, uint32_t *ip);
 
 #endif
 

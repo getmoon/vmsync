@@ -1,18 +1,9 @@
 #define _REENTRANT
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <string.h>
-#include <sys/uio.h>
-#include <unistd.h>
-#include <pthread.h>
-
-#define NUM_THREADS 	32
-
+#include "base.h"
 #include "msg.h"
 #include "priv.h"
+#define NUM_THREADS 	32
+
 
 #define ALLOC_BUF_SIZE	(64 * 1024 * 1024)
 
@@ -118,6 +109,6 @@ next_msg_test:
 
 backoff:
 	pthread_exit((void *)0);
-	return;
+	return NULL;
 }
 

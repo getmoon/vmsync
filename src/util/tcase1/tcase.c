@@ -1,24 +1,4 @@
-
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <string.h>
-#include <sys/uio.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <unistd.h>
-#include <stdio.h>      /* for printf() and fprintf() */
-#include <sys/socket.h> /* for socket(), connect(), send(), and recv() */
-#include <arpa/inet.h>  /* for sockaddr_in and inet_addr() */
-#include <stdlib.h>     /* for atoi() and exit() */
-#include <string.h>     /* for memset() */
-#include <unistd.h>     /* for close() */
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#include "base.h"
 
 /*
  * ./tcase {src_file} {file_id} {block_size}	
@@ -84,7 +64,7 @@ int do_fixed_size_test(int fd , __u32 file_size , __u32 file_id , __u32 block_si
 
 	lseek64(fd , offset , SEEK_SET);
 	signal(SIGINT, SIG_IGN);
-	vm_file_lock(0, offset, len);
+	vmsync_lock(0, offset, len);
 	ret = write(fd , buffer , len);
 	if(ret < 0){
 		printf("write file fail\n");
@@ -93,7 +73,7 @@ int do_fixed_size_test(int fd , __u32 file_size , __u32 file_id , __u32 block_si
 	
 	printf("	INFO:	file id %u offset %llu len %llu\n" , file_id , offset , len);	
 	vmsync_send(file_id , offset , len);
-	vm_file_unlock(0, offset, len);
+	vmsync_unlock(0, offset, len);
 	signal(SIGINT, SIG_DFL);
 	return 0;
 }
@@ -193,7 +173,7 @@ int main(int argc , char ** argv)
 	
 
 	close(fd);
-backoff:
+
 	vmsync_fini(file_name , file_id);
 	return 0;
 }

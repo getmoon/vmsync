@@ -1,17 +1,4 @@
 #define _REENTRANT
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <string.h>
-#include <sys/uio.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
 #include "base.h"
 #include "priv.h"
 
@@ -133,7 +120,6 @@ static int config_readline(int fd , char * backup_filename , int * id)
 static int config_file_init(char * config_file)
 {
 	int		fd;
-	int		len;
 	char		filename[1024];
 	int		id;
 	int		ret;

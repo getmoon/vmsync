@@ -1,25 +1,3 @@
-
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <string.h>
-#include <sys/uio.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <unistd.h>
-#include <stdio.h>      /* for printf() and fprintf() */
-#include <sys/socket.h> /* for socket(), connect(), send(), and recv() */
-#include <arpa/inet.h>  /* for sockaddr_in and inet_addr() */
-#include <stdlib.h>     /* for atoi() and exit() */
-#include <string.h>     /* for memset() */
-#include <unistd.h>     /* for close() */
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
 /*
  *	./a.out server_ip source_file file_id block_id size
  */
@@ -40,7 +18,6 @@ int socket_init(void)
 	int sock;                        /* Socket descriptor */
 	struct sockaddr_in echoServAddr; /* Echo server address */
 	unsigned short echoServPort;     /* Echo server port */
-	char *servIP;                    /* Server IP address (dotted quad) */
        
 	echoServPort = BACKUP_SVR_PORT;
 	

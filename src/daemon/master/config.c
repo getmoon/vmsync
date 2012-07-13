@@ -1,16 +1,6 @@
 #define _REENTRANT
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <string.h>
-#include <sys/uio.h>
-#include <unistd.h>
-#include <pthread.h>
-
-#include "priv.h"
 #include "base.h"
+#include "priv.h"
 
 
 int config_cft_init(void)
@@ -66,7 +56,6 @@ int config_cft_dump(void)
 struct config_instance_t *  config_cft_inst_alloc()
 {
 	int			i;
-	int			fd;
 	struct config_instance_t * inst;
 
 	for(i = 0 ; i < INSTANCE_MAX_CNT ; i++){
@@ -167,9 +156,6 @@ static int config_readline(int fd , struct config_instance_t * inst)
 static int config_file_init(char * config_file)
 {
 	int		fd;
-	int		len;
-	char		filename[1024];
-	int		id;
 	int		ret;
 	struct config_instance_t * inst;
 

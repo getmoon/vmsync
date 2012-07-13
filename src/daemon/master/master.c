@@ -1,14 +1,4 @@
 #define _REENTRANT
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <string.h>
-#include <sys/uio.h>
-#include <unistd.h>
-#include <pthread.h>
-
 #include "base.h"
 #include "priv.h"
 #include "instance.h"
@@ -20,10 +10,9 @@ char		config_file[256];
 
 void usage(void)
 {
-	printf("./daemon -p {work_path} -t {sync_period} -c {config_file}\n");
+	printf("./master -p {work_path} -t {sync_period} -c {config_file}\n");
 }
 
-#if 1
 int main(int argc , char ** argv)
 {
 	int				ret;
@@ -90,22 +79,3 @@ int main(int argc , char ** argv)
 	return(0);
 }
 
-#else
-
-int main(int argc , char ** argv)
-{
-	int				ret;
-	int				i;
-	struct config_instance_t *	inst;
-
-	ret = config_init("config.txt");
-	if(ret < 0){
-		print_error("config file init fail\n");
-		exit(0);
-	}
-
-	config_cft_dump();
-	return(0);
-}
-
-#endif

@@ -4,7 +4,7 @@ INCLUDE += -I$(SYNC_TOP_SRC)/include/sync/
 
 default = $(PROG)
 
-C_FLAGS += $(INCLUDE) 
+C_FLAGS += $(INCLUDE) -Wall -Werror
 
 .c.o:
 	gcc -c $< $(C_FLAGS)
