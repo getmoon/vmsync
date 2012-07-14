@@ -39,7 +39,7 @@ void usage(void)
 
 char		buffer[64*1024*1024];
 
-int do_fixed_size_test(int fd , __u32 file_size , __u32 file_id , __u32 block_size)
+int do_fixed_size_test(int fd , uint32_t file_size , uint64_t file_id , uint32_t block_size)
 {
 	__u64		offset;
 	__u64		len = block_size;
@@ -71,14 +71,14 @@ int do_fixed_size_test(int fd , __u32 file_size , __u32 file_id , __u32 block_si
 		return 0;
 	}
 	
-	printf("	INFO:	file id %u offset %llu len %llu\n" , file_id , offset , len);	
+	printf("	INFO:	file id %llu offset %llu len %llu\n" , file_id , offset , len);	
 	vmsync_send(file_id , offset , len);
 	vmsync_unlock(0, offset, len);
 	signal(SIGINT, SIG_DFL);
 	return 0;
 }
 
-int do_enlarge_size_test(int fd , __u32 file_size , __u32 file_id , __u32 block_size)
+int do_enlarge_size_test(int fd , __u32 file_size , uint64_t file_id , __u32 block_size)
 {
 	do_fixed_size_test(fd , file_size , file_id , block_size);
 	return 0;
@@ -87,7 +87,7 @@ int do_enlarge_size_test(int fd , __u32 file_size , __u32 file_id , __u32 block_
 int main(int argc , char ** argv)
 {
 	char		file_name[256];
-	__u32		file_id;
+	uint64_t	file_id;
 	__u32		file_size;
 	__u32		block_size;
 	char		operate[32];
@@ -115,7 +115,7 @@ int main(int argc , char ** argv)
 	
 
 	sprintf(file_name , "%s" , argv[1]);
-	file_id = atoi(argv[2]);
+	file_id = strtoll(argv[2], NULL, 0);
 	block_size = DEFAULT_BLOCK_SIZE;
 	file_size = get_file_len(file_name);
 	sprintf(operate , "%s" , argv[4]);

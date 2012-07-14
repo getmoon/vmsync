@@ -85,6 +85,7 @@ static inline int is_number(char *arg)
 
 extern int parse_ip(char * arg, uint32_t * ip);
 extern int parse_u32(char * arg, uint32_t * num);
+extern int parse_u64(char * arg, uint64_t * num);
 
 extern int vmsync_file_create(const char * file_name);
 extern int vmsync_file_remove(const char * file_name);

@@ -1,4 +1,5 @@
 #define _REENTRANT
+#define _LARGEFILE64_SOURCE
 #include "base.h"
 #include "msg.h"
 #include "priv.h"
@@ -8,14 +9,14 @@
 int msg_handler(struct pthread_attr_t * pattr , 
 		struct config_file_t * cft , 
 		__u32 msg_type , 
-		__u32 msg_fileid , 
+		uint64_t msg_fileid , 
 		__u32 msg_blockid , 
 		__u8 * msg_data , 
 		__u32 msg_datalen)
 {
 	__u64		offset;
-	__u64		ret64;
-	int		ret;
+	ssize_t		ret;
+	off64_t		off_ret;
 
 	if(msg_type != MSG_TYPE_SYNC_DATA){
 		print_info("msg type %d fail\n" , MSG_TYPE_SYNC_DATA);
@@ -23,8 +24,8 @@ int msg_handler(struct pthread_attr_t * pattr ,
 	}
 
 	offset = msg_blockid * block_size;
-	ret64 = lseek64(cft->fd , offset , SEEK_SET);
-	if(ret64 < 0){
+	off_ret = lseek64(cft->fd , offset , SEEK_SET);
+	if(off_ret == (off64_t)-1){
 		print_error("lseek file fail offset %llu\n" , offset);
 		return -1;
 	}

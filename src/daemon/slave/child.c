@@ -41,7 +41,9 @@ void * do_child(void *arg)
 	int			offset;
 	msg_data_t *		msg;
 	__u32			msg_type;
-	__u32			msg_fileid;
+	uint64_t		msg_fileid;
+	uint64_t		msg_fileid_l;
+	uint64_t		msg_fileid_h;
 	__u32			msg_blockid;
 	__u32			msg_datalen;
 	__u32			msg_totlen;
@@ -77,9 +79,12 @@ next_msg_test:
 		}
 		
 		msg_type = ntohl(msg->type);
-		msg_fileid = ntohl(msg->fileid);
+		//msg_fileid = ntohl(msg->fileid);
 		msg_blockid = ntohl(msg->blockid);
 		msg_datalen = ntohl(msg->datalen);
+		msg_fileid_l = (uint64_t)ntohl(msg->l_fileid);
+		msg_fileid_h = (uint64_t)ntohl(msg->h_fileid);
+		msg_fileid = (msg_fileid_l & 0xFFFFFFFF) + ((msg_fileid_h & 0xFFFFFFFF) << 32);
 
 		if(offset < (sizeof(msg_data_t) + msg_datalen)){
 			//print_debug("not enough for msg head and data\n");
@@ -92,7 +97,7 @@ next_msg_test:
 		if(cft == NULL){
 			cft = config_cft_lookup(msg_fileid);
 			if(cft == NULL){
-				print_info("no config exist for file id %d\n" , msg_fileid);
+				print_info("no config exist for file id %llu\n" , msg_fileid);
 				goto backoff;
 			}
 		}

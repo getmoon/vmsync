@@ -11,7 +11,8 @@ enum {
 
 typedef struct __msg_data_t{
 	__u32		type;
-	__u32		fileid;
+	__u32		h_fileid;
+	__u32		l_fileid;
 	__u32		blockid;
 	__u32		datalen;
 	__u8		data[0];

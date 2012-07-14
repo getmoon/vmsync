@@ -7,7 +7,7 @@
 
 int		sock_fd = -1;
 char 		filename[512];
-int		file_id;
+uint64_t	file_id;
 int		block_id;
 int		block_size;
 int		file_size;
@@ -85,7 +85,7 @@ int arg_init(int argc , char ** argv)
 
 	sprintf(filename , "%s" , argv[2]);
 	sprintf(serverip , "%s" , argv[1]);
-	file_id = atoi(argv[3]);
+	file_id = strtoll(argv[3], NULL, 0);
 	block_id = atoi(argv[4]);
 	block_size = atoi(argv[5]);
 	file_size = get_file_len(filename);
@@ -149,7 +149,8 @@ int main(int argc , char ** argv)
 		}
 
 		msg->type = htonl(MSG_TYPE_SYNC_DATA);
-		msg->fileid = htonl(file_id);
+		msg->l_fileid = htonl(file_id & 0xFFFFFFFF);
+		msg->h_fileid = htonl((file_id >> 32) & 0xFFFFFFFF);
 		msg->blockid = htonl(i);	
 		msg->datalen = htonl(len);
 		slen = sizeof(msg_data_t) + len;

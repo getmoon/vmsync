@@ -13,7 +13,6 @@ int config_cft_init(void)
 	for(i = 0 ; i < INSTANCE_MAX_CNT ; i++){
 		inst = instance_base + i;
 		inst->use = 0;
-		//inst->filename[0] = '0';
 		inst->fileid = 0;
 		inst->ipcnt = 0;
 
@@ -25,29 +24,6 @@ int config_cft_init(void)
 			//sprintf(rip->ipname, "%d.%d.%d.%d", 0, 0, 0, 0);
 			memset(rip->ipname, 0, 64);
 		}
-	}
-
-	return 0;
-}
-
-int config_cft_dump(void)
-{
-	int				i;
-	int				j;
-	struct remote_ip_t		*rip;
-	struct config_instance_t	*inst;
-
-	for(i = 0 ; i < INSTANCE_MAX_CNT ; i++){
-		inst = instance_base + i;
-		if (inst->use == 0)
-			continue;
-		
-		print_debug("[%d][use=%d][filename=%s][fileid=%d][ipcnt=%d]", i, inst->use, inst->filename, inst->fileid, inst->ipcnt);
-		for (j = 0; j < inst->ipcnt; j++){
-			rip = inst->remoteip + j;
-			print_debug("[%08x - %s]", rip->ip, rip->ipname);
-		}
-		print_debug("\n");
 	}
 
 	return 0;
@@ -117,13 +93,17 @@ static int config_readline(int fd , struct config_instance_t * inst)
 
 			if (token_cnt == 2){
 				memcpy(idbuffer , linebuffer + token_pos + 1, strlen(linebuffer) - token_pos);
-				if(is_number(idbuffer) == 0){
+				//if(is_number(idbuffer) == 0){
+				//	fprintf(stderr , "ERROR: id in config file is not number\n");
+				//	return -1;
+				//}
+
+				idbuffer[strlen(linebuffer) - token_pos] = '\0';
+				//inst->fileid = atoi(idbuffer);
+				if (parse_u64(idbuffer, &inst->fileid)){
 					fprintf(stderr , "ERROR: id in config file is not number\n");
 					return -1;
 				}
-
-				idbuffer[strlen(linebuffer) - token_pos] = '\0';
-				inst->fileid = atoi(idbuffer);
 				token_pos = i;
 			}
 

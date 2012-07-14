@@ -108,14 +108,16 @@ static void release_dir(struct dir_instance_t * head)
 	}
 }
 
-static msg_data_t * load_msg(int fd, __u32 type, __u32 file_id, __u32 blockid, __u32 blk_len, __u8 * msg_buffer)
+static msg_data_t * load_msg(int fd, __u32 type, uint64_t file_id, __u32 blockid, __u32 blk_len, __u8 * msg_buffer)
 {
 	int	read_size;
 	uint64_t offset = (uint64_t)(blockid) * (uint64_t)(blk_len);
 	msg_data_t * msg = (msg_data_t*)msg_buffer;
 
 	msg->type = htonl(type);
-	msg->fileid = htonl(file_id);
+	//msg->fileid = htonl(file_id);
+	msg->h_fileid = htonl((file_id >> 32) & 0xFFFFFFFFULL);
+	msg->l_fileid = htonl(file_id & 0xFFFFFFFFULL);
 	msg->blockid = htonl(blockid);
 
 	if (lseek64(fd, offset, SEEK_SET) != offset){
@@ -145,7 +147,7 @@ void * do_work_handler(void *arg)
 	struct config_instance_t * inst = (struct config_instance_t *)arg;
 	int					i;
 	int					lock_fd[LOCK_HASH_SIZE];
-	int					file_id = inst->fileid;
+	uint64_t				file_id = inst->fileid;
 	int					source_file_fid;
 	int					ret;
 	char					send_dir[512] = "";
@@ -161,7 +163,7 @@ void * do_work_handler(void *arg)
 	
 	signal(SIGPIPE,SIG_IGN);
 	
-	sprintf(send_dir, "%s/send/%d/", sync_work_dir, file_id);
+	sprintf(send_dir, "%s/send/%llu/", sync_work_dir, file_id);
 	if (access(send_dir, F_OK))
 		mkdir(send_dir, 0777);
 
@@ -172,10 +174,10 @@ void * do_work_handler(void *arg)
 	}
 
 	for (i = 0; i < LOCK_HASH_SIZE; i++){
-		sprintf(file_lock_name, "%s/lock/%d+%d.lck", sync_work_dir, file_id, i);
+		sprintf(file_lock_name, "%s/lock/%llu+%d.lck", sync_work_dir, file_id, i);
 		lock_fd[i] = open(file_lock_name, O_RDWR | O_CREAT , 0666);	
 		if (lock_fd[i] < 0 ) {
-			print_error("open file fails %s\n", file_lock_name);
+			printf("open file fails %s\n", file_lock_name);
 			exit(0);
 		}
 	}
@@ -196,8 +198,8 @@ void * do_work_handler(void *arg)
 		}
 
 		source_file_fid = open(inst->filename, O_RDONLY | O_CREAT, 0666);
-		if(source_file_fid < 0){
-			print_error("open file fail\n");
+		if (source_file_fid < 0){
+			print_error("open %s error\n", inst->filename);
 			release_dir(dir_head);
 			usleep(0);
 			continue;
@@ -225,7 +227,6 @@ void * do_work_handler(void *arg)
 						vmsync_file_remove(dir_curr->filename);
 					}
 				}
-
 			}else{
 				for (i = 0; i < inst->ipcnt; i++){
 					rip = inst->remoteip + i;

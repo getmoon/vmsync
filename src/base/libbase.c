@@ -93,4 +93,25 @@ out:
 	return ret;
 }
 
+int
+parse_u64(char *arg, uint64_t *num)
+{
+	int64_t ret;
+
+	if(arg == NULL || num == NULL) {
+		ret = -1;
+		goto out;
+	}
+
+	ret = is_number(arg);
+	if(ret == FALSE) {
+		ret = -1;
+		goto out;
+	}
+
+	*num = strtoll(arg, NULL, 0);
+	ret = 0;
+out:
+	return ret;
+}
 

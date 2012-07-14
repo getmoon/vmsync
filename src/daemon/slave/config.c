@@ -21,7 +21,7 @@ int config_cft_init(void)
 	return 0;
 }
 
-struct config_file_t * config_cft_lookup(__u32 file_id)
+struct config_file_t * config_cft_lookup(uint64_t file_id)
 {
 	int	i;
 
@@ -38,7 +38,7 @@ struct config_file_t * config_cft_lookup(__u32 file_id)
 }
 
 
-int config_cft_alloc(char * filename , int id)
+int config_cft_alloc(char * filename , uint64_t id)
 {
 	int			i;
 	int			fd;
@@ -66,7 +66,7 @@ int config_cft_alloc(char * filename , int id)
 	return -1;
 }
 
-static int config_readline(int fd , char * backup_filename , int * id)
+static int config_readline(int fd , char * backup_filename , uint64_t * id)
 {
 	int	cnt;
 	char	c;
@@ -88,11 +88,10 @@ static int config_readline(int fd , char * backup_filename , int * id)
 
 		if(c == '\n'){
 			memcpy(idbuffer , linebuffer + token_pos + 1, strlen(linebuffer) - token_pos);
-			if(is_number(idbuffer) == 0){
+			if (parse_u64(idbuffer, id)){
 				print_error("id in config file is not number\n");
 				return -1;
 			}
-			*id = atoi(idbuffer);
 			return 1;
 		}
 
@@ -121,7 +120,7 @@ static int config_file_init(char * config_file)
 {
 	int		fd;
 	char		filename[1024];
-	int		id;
+	uint64_t	id;
 	int		ret;
 
 	fd = open(config_file , O_RDONLY);
@@ -140,7 +139,7 @@ static int config_file_init(char * config_file)
 		if(ret == 0)
 			break;		
 		
-		print_debug("file=%s id=%d\n" , filename , id);
+		print_debug("file=%s id=%llu\n" , filename , id);
 		ret = config_cft_alloc(filename , id);
 		if(ret < 0){
 		}

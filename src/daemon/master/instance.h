@@ -15,7 +15,7 @@ struct remote_ip_t{
 struct config_instance_t{
         int             	use;
         char            	filename[512];
-	__u32			fileid;
+	uint64_t		fileid;
 	int			ipcnt;
 	struct remote_ip_t	remoteip[MAX_REMOTE_IP_CNT];
 	pthread_t		work_thread_t;

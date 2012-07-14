@@ -7,7 +7,7 @@ char		config_file[256];
 
 void usage(void)
 {
-	print_info("./slave -c {config_file}\n");
+	printf("./slave -c {config_file}\n");
 }
 
 int main(int argc , char ** argv)
