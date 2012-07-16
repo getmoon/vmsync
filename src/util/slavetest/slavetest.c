@@ -97,9 +97,9 @@ int main(int argc , char ** argv)
 {
 	msg_data_t *	msg;
 	int		i;
-	int		a;
-	int		b;
-	int		c;
+	//int		a;
+	//int		b;
+	//int		c;
 	int		fd;
 	int		len;
 	int		ret;
@@ -128,11 +128,13 @@ int main(int argc , char ** argv)
 	}
 	
 
+#if (0)
 	a = file_size % block_size;
 	b = file_size / block_size;
 	if( a != 0 ){
 		c = b + 1;
 	}
+#endif
 
 	i = 0;	
 	while(1){

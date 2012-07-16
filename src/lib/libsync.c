@@ -15,7 +15,7 @@ int vmsync_init(const char * work_path , const char * source_file_full_name, int
 	int	ret;
 	char	file_lock_name[128] = "";
 	char	dir_name[128] = "";
-	int	fd;
+	//int	fd;
 	int	i;
 
 	resource_init();
@@ -55,7 +55,7 @@ int vmsync_init(const char * work_path , const char * source_file_full_name, int
 		f_lock_fd[i] = open(file_lock_name, O_RDWR | O_CREAT, 0666);
 		if (f_lock_fd[i] < 0){
 			print_error("Create lock file %s error" , file_lock_name);
-			return fd;
+			return f_lock_fd[i];
 		}
 	}
 
