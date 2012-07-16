@@ -3,7 +3,7 @@
 INCLUDE += -I$(SYNC_TOP_SRC)/include/base/
 INCLUDE += -I$(SYNC_TOP_SRC)/include/sync/
 
-C_FLAGS += -Wall -Werror
+C_FLAGS += -Wall -Werror -D_FILE_OFFSET_BITS=64
 
 all: $(LIB) $(DLL)
 
