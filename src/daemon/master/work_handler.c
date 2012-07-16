@@ -175,7 +175,7 @@ void * do_work_handler(void *arg)
 		sprintf(file_lock_name, "%s/lock/%d+%d.lck", sync_work_dir, file_id, i);
 		lock_fd[i] = open(file_lock_name, O_RDWR | O_CREAT , 0666);	
 		if (lock_fd[i] < 0 ) {
-			printf("open file fails %s\n", file_lock_name);
+			print_error("open file fails %s\n", file_lock_name);
 			exit(0);
 		}
 	}
@@ -196,6 +196,13 @@ void * do_work_handler(void *arg)
 		}
 
 		source_file_fid = open(inst->filename, O_RDONLY | O_CREAT, 0666);
+		if(source_file_fid < 0){
+			print_error("open file fail\n");
+			release_dir(dir_head);
+			usleep(0);
+			continue;
+		}
+
 		for_each_entry_dir(dir_curr, dir_head){
 			vmsync_file_lock(lock_fd[dir_curr->blockid % LOCK_HASH_SIZE]);
 			msg = load_msg(source_file_fid, MSG_TYPE_SYNC_DATA, file_id, dir_curr->blockid, block_size, msg_buff);
