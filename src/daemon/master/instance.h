@@ -20,6 +20,8 @@ struct config_instance_t{
 	int			ipcnt;
 	struct remote_ip_t	remoteip[MAX_REMOTE_IP_CNT];
 	pthread_t		work_thread_t[MAX_THREAD_PER_INST];
+	pthread_mutex_t 	work_thread_lock[MAX_THREAD_PER_INST];
+	struct dir_instance_t * work_dir_head[MAX_THREAD_PER_INST];
 	pthread_t		mana_thread_t;
 	int			lock_fd[LOCK_HASH_SIZE];
 };
