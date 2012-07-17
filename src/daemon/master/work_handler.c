@@ -197,7 +197,7 @@ void * do_work_handler(void *arg)
 		curr_handle_time = get_current_seconds();
 		
 		if((curr_handle_time - last_handle_time) < sync_period){
-			sleep(3);
+			usleep(10000);
 		}
 
 		last_handle_time = get_current_seconds();
