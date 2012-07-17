@@ -26,6 +26,11 @@ int config_cft_init(void)
 			//sprintf(rip->ipname, "%d.%d.%d.%d", 0, 0, 0, 0);
 			memset(rip->ipname, 0, 64);
 		}
+
+		for(j = 0; j < MAX_THREAD_PER_INST; j++){
+			pthread_mutex_init(&inst->work_thread_lock[j] , NULL);
+			inst->work_dir_head[j] = NULL;
+		}
 	}
 
 	return 0;
