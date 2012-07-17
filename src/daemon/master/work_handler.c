@@ -68,6 +68,7 @@ static struct dir_instance_t * load_dir(const char * dir_name)
 	struct dir_instance_t * prev = NULL;
 	DIR 			*sys_dir;
 	struct dirent   	*sys_elem;
+	int			i = 0;
 
 	sys_dir = opendir(dir_name);
 	if (!sys_dir)
@@ -76,10 +77,16 @@ static struct dir_instance_t * load_dir(const char * dir_name)
 	while ((sys_elem = readdir(sys_dir)) != NULL){
 		if (sys_elem->d_type == DT_REG){	// regular files
 			curr = (struct dir_instance_t*)malloc(sizeof(struct dir_instance_t));
+			if(curr == NULL){
+				print_error("alloc memory fail\n");
+				goto backoff;				
+			}
+
 			sprintf(curr->filename, "%s%s", dir_name, sys_elem->d_name);
 			curr->next = NULL;
 			if (filename_parse(sys_elem->d_name, curr)){
-				return NULL;
+				free(curr);
+				continue;
 			}
 			
 			if (dir_head == NULL){
@@ -89,8 +96,11 @@ static struct dir_instance_t * load_dir(const char * dir_name)
 				prev = curr;
 			}
 		}
+		i++;
+		if(i >= 2048)
+			break;
 	}
-
+backoff:
 	closedir(sys_dir);
 
 	return dir_head;
