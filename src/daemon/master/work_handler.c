@@ -23,6 +23,17 @@ int dowork_lock_init(struct config_instance_t * inst)
 	return 0;
 }
 
+int do_read_dir_handler(struct config_instance_t * inst)
+{
+        return 0;
+}
+
+int do_read_file_handler(struct config_instance_t * inst)
+{
+        return 0;
+}
+
+
 void * do_work_handler(void *arg)
 {
 	struct config_instance_t * 	inst = (struct config_instance_t *)arg;
@@ -36,6 +47,11 @@ void * do_work_handler(void *arg)
 			print_debug("my work idx is %d\n", work_idx);
 		}
 	}
+
+        if(work_idx == 0)
+                do_read_dir_handler(inst);
+        else
+                do_read_file_handler(inst);
 
 	return 0;
 }
