@@ -7,6 +7,7 @@ int config_cft_init(void)
 {
 	int				i;
 	int				j;
+	int				k;
 	struct remote_ip_t		*rip;
 	struct config_instance_t	*inst;
 
@@ -19,7 +20,8 @@ int config_cft_init(void)
 		memset(inst->filename, 0, 512);
 		for (j = 0; j < MAX_REMOTE_IP_CNT; j++){
 			rip = inst->remoteip + j;
-			rip->sockfd = -1;
+			for(k = 0 ; k < MAX_THREAD_PER_INST ; k++)
+				rip->sockfd[k] = -1;
 			rip->ip = 0;
 			//sprintf(rip->ipname, "%d.%d.%d.%d", 0, 0, 0, 0);
 			memset(rip->ipname, 0, 64);

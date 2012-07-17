@@ -12,5 +12,6 @@ extern int remote_connect(char * serverip , unsigned short serverport);
 extern char            sync_work_dir[512];
 extern int             sync_period ;
 extern int instance_init(struct config_instance_t * inst);
+extern int dowork_lock_init(struct config_instance_t * inst);
 
 #endif//__SLAVE_PRIV_H__

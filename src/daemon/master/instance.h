@@ -5,10 +5,11 @@
 
 #define MAX_REMOTE_IP_CNT	8
 #define INSTANCE_MAX_CNT        (64+1)
+#define MAX_THREAD_PER_INST	8
 
 struct remote_ip_t{
 	__u32			ip;
-	int			sockfd;
+	int			sockfd[MAX_THREAD_PER_INST];
 	char			ipname[64];
 };
 
@@ -18,8 +19,9 @@ struct config_instance_t{
 	uint64_t		fileid;
 	int			ipcnt;
 	struct remote_ip_t	remoteip[MAX_REMOTE_IP_CNT];
-	pthread_t		work_thread_t;
+	pthread_t		work_thread_t[MAX_THREAD_PER_INST];
 	pthread_t		mana_thread_t;
+	int			lock_fd[LOCK_HASH_SIZE];
 };
 
 struct dir_instance_t{

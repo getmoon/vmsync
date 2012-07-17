@@ -1,0 +1,5 @@
+#ignore .metadata
+
+#ignore obj and lib file
+*.[oa]
+*.swp
