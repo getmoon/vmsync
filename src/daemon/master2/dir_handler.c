@@ -68,6 +68,7 @@ static int load_dir(struct config_instance_t * inst , const char * dir_name)
         struct dirent           *sys_elem;
         int                     i = 0;
 	int			work_idx = 0;
+	static int		cnt = 0;
 
         sys_dir = opendir(dir_name);
         if (!sys_dir)
@@ -87,6 +88,9 @@ static int load_dir(struct config_instance_t * inst , const char * dir_name)
                                 free(curr);
                                 continue;
                         }
+			cnt++;
+
+			print_debug("load block id %d load cnt %d\n" , curr->blockid , cnt);
 
 			work_idx = i%MAX_THREAD_PER_INST;
 
@@ -153,6 +157,7 @@ void * do_dir_handler(void * arg)
 			usleep(1000);
 			need_wait = 0;
 		}
+		print_debug("test out\n");
 	}
         return 0;
 }

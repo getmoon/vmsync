@@ -132,6 +132,7 @@ int vmsync_send(uint64_t fild_id, uint64_t offset , uint64_t len)
 	uint64_t		start_blk_id;
 	uint64_t		end_blk_id;
 	char			file_name[512];
+	static int		cnt = 0;
 
 	if (len == 0)
 		return ERROR_SYNC_OK;
@@ -149,6 +150,8 @@ int vmsync_send(uint64_t fild_id, uint64_t offset , uint64_t len)
 	for (i = start_blk_id; i <= end_blk_id; i++){
 		sprintf(file_name, "%s/send/%llu/all+%llu", sync_work_dir, fild_id, i);
 		ret = vmsync_file_create(file_name);
+		cnt++;
+		print_debug("create blockid %llu total cnt %u\n" , i , cnt);
 	}
 
 	return ret;

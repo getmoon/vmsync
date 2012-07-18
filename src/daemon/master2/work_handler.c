@@ -85,6 +85,7 @@ int do_file_sync(struct config_instance_t * inst ,
 	struct remote_ip_t *	rip;
 	int			ret;
 	char                    record_signle_name[512] = "";
+	static int		cnt = 0;
 
 	msg = load_msg(file_fd, MSG_TYPE_SYNC_DATA, inst->fileid, dir_curr->blockid, block_size, msg_buff);
 	if (!msg){
@@ -104,7 +105,12 @@ int do_file_sync(struct config_instance_t * inst ,
 						"%s/sgl+%d+%s", send_dir, dir_curr->blockid, rip->ipname);
 					vmsync_file_create(record_signle_name);
 				}
-				print_debug("file_id %lld blockid %d \n" , inst->fileid , dir_curr->blockid);
+				cnt++;
+				print_debug("send file_id %lld blockid %d cnt %d\n" , inst->fileid , dir_curr->blockid , cnt);
+			}else{
+				sprintf(record_signle_name,
+					"%s/sgl+%d+%s", send_dir, dir_curr->blockid, rip->ipname);
+				vmsync_file_create(record_signle_name);
 			}
 		}
 		vmsync_file_remove(dir_curr->filename);
@@ -115,7 +121,8 @@ int do_file_sync(struct config_instance_t * inst ,
 				ret = send_msg(msg, rip , work_idx , file_fd);
 				if (ret == 0)
 					vmsync_file_remove(dir_curr->filename);
-				print_debug("file_id %lld blockid %d \n" , inst->fileid , dir_curr->blockid);
+				cnt++;
+				print_debug("send file_id %lld blockid %d cnt %d\n" , inst->fileid , dir_curr->blockid , cnt);
 			}
 		}
 	}
@@ -179,6 +186,7 @@ void * do_work_handler(void *arg)
                 }
 
 		for_each_entry_dir(dir_curr, dir_head){
+			//print_debug("work thread %d start to sync block %d\n" , work_idx , dir_curr->blockid);
 			vmsync_file_lock(inst->lock_fd[dir_curr->blockid % LOCK_HASH_SIZE]);
 			do_file_sync(inst , work_idx , msg_buff , source_file_fid , send_dir , dir_curr);
 			vmsync_file_unlock(inst->lock_fd[dir_curr->blockid % LOCK_HASH_SIZE]);

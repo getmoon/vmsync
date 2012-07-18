@@ -37,8 +37,8 @@ void * do_mana_handler(void *arg)
 				if(remote->sockfd[j] < 0){
 					ret = remote_connect(remote->ipname , BACKUP_SVR_PORT);		
 					if(ret < 0){
-						print_info("rebuild connect to %s:%d fail for work_thread %d\n" , 
-								remote->ipname , BACKUP_SVR_PORT , j);
+						//print_info("rebuild connect to %s:%d fail for work_thread %d\n" , 
+						//		remote->ipname , BACKUP_SVR_PORT , j);
 						remote->sockfd[j] = -1;
 						continue;
 					}
