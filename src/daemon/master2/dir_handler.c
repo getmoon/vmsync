@@ -115,7 +115,7 @@ void * do_dir_handler(void * arg)
         int                             last_handle_time;
         int                             curr_handle_time;
 	int				i;
-	int				ret;
+	int				need_wait;
 
 	signal(SIGPIPE,SIG_IGN);
 
@@ -123,7 +123,6 @@ void * do_dir_handler(void * arg)
         if (access(send_dir, F_OK))
                 mkdir(send_dir, 0777);
 
-	instance_state_reset(inst);
 
 	last_handle_time = get_current_seconds();
 	while(1){
@@ -135,21 +134,25 @@ void * do_dir_handler(void * arg)
 		last_handle_time = get_current_seconds();
 
 		load_dir(inst , send_dir);
-		
+
 		for(i = 0 ; i < MAX_THREAD_PER_INST ; i++)
 			pthread_cond_signal(&inst->work_thread_wait[i]);
 
+		need_wait = 0;
 		while(1){
-			//printf("test out\n");
-			ret = instance_state_test(inst);
-			if(ret){
-				instance_state_reset(inst);
-				printf("get out\n");
-				break;
+			for(i = 0 ; i < MAX_THREAD_PER_INST ; i++){
+				pthread_mutex_lock(&inst->work_thread_lock[i]);
+				if(inst->work_dir_head[i] != NULL)
+					need_wait = 1;
+				pthread_mutex_unlock(&inst->work_thread_lock[i]);
 			}
+
+			if(need_wait == 0)
+				break;
+			
 			usleep(1000);
+			need_wait = 0;
 		}
-		
 	}
         return 0;
 }
