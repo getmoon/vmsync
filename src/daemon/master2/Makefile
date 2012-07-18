@@ -3,6 +3,7 @@ PROG_OBJ = 	master.o \
 		config.o \
 		work_handler.o \
 		mana_handler.o \
+		dir_handler.o \
 		socket.o \
 
 PROG = master

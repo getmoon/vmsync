@@ -22,6 +22,7 @@
 #include <dirent.h>
 #include <pthread.h>
 #include <signal.h>
+#include <sys/sendfile.h>
 
 /*
  *

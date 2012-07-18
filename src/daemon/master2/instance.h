@@ -22,8 +22,12 @@ struct config_instance_t{
 	pthread_t		work_thread_t[MAX_THREAD_PER_INST];
 	pthread_mutex_t 	work_thread_lock[MAX_THREAD_PER_INST];
 	struct dir_instance_t * work_dir_head[MAX_THREAD_PER_INST];
+	pthread_cond_t 		work_thread_wait[MAX_THREAD_PER_INST];
 	pthread_t		mana_thread_t;
+	pthread_t		dir_thread_t;
 	int			lock_fd[LOCK_HASH_SIZE];
+	pthread_mutex_t 	state_lock;
+	int			state_cnt;
 };
 
 struct dir_instance_t{

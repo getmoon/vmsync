@@ -16,6 +16,8 @@ int config_cft_init(void)
 		inst->use = 0;
 		inst->fileid = 0;
 		inst->ipcnt = 0;
+		inst->state_cnt = 0;
+		pthread_mutex_init(&inst->state_lock , NULL);
 
 		memset(inst->filename, 0, 512);
 		for (j = 0; j < MAX_REMOTE_IP_CNT; j++){
@@ -30,6 +32,7 @@ int config_cft_init(void)
 		for(j = 0; j < MAX_THREAD_PER_INST; j++){
 			pthread_mutex_init(&inst->work_thread_lock[j] , NULL);
 			inst->work_dir_head[j] = NULL;
+			pthread_cond_init(&inst->work_thread_wait[j] , NULL);
 		}
 	}
 
