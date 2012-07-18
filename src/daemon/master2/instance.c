@@ -35,6 +35,7 @@ void instance_state_inc(struct config_instance_t * inst)
 {
 	pthread_mutex_lock(&inst->state_lock);
 	inst->state_cnt++ ;	
+	printf("state cnt %d\n" , inst->state_cnt);
 	pthread_mutex_unlock(&inst->state_lock);
 }
 
