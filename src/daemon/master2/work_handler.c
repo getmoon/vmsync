@@ -92,6 +92,7 @@ int do_file_sync(struct config_instance_t * inst ,
 		return -1;
 	}
 
+
 	if (dir_curr->broadcast == 0xffffffff){
 		for (i = 0; i < inst->ipcnt; i++){
 			rip = inst->remoteip + i;
@@ -103,6 +104,7 @@ int do_file_sync(struct config_instance_t * inst ,
 						"%s/sgl+%d+%s", send_dir, dir_curr->blockid, rip->ipname);
 					vmsync_file_create(record_signle_name);
 				}
+				print_debug("file_id %lld blockid %d \n" , inst->fileid , dir_curr->blockid);
 			}
 		}
 		vmsync_file_remove(dir_curr->filename);
@@ -113,6 +115,7 @@ int do_file_sync(struct config_instance_t * inst ,
 				ret = send_msg(msg, rip , work_idx , file_fd);
 				if (ret == 0)
 					vmsync_file_remove(dir_curr->filename);
+				print_debug("file_id %lld blockid %d \n" , inst->fileid , dir_curr->blockid);
 			}
 		}
 	}
@@ -184,7 +187,6 @@ void * do_work_handler(void *arg)
 
 		close(source_file_fid);
 		release_dir(dir_head);	
-		instance_state_inc(inst);
 	}
 
 	free(msg_buff);
