@@ -90,7 +90,7 @@ static int load_dir(struct config_instance_t * inst , const char * dir_name)
                         }
 			cnt++;
 
-			print_debug("load block id %d load cnt %d\n" , curr->blockid , cnt);
+			//print_debug("load block id %d load cnt %d\n" , curr->blockid , cnt);
 
 			work_idx = i%MAX_THREAD_PER_INST;
 

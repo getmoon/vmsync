@@ -17,7 +17,7 @@ int msg_handler(struct pthread_attr_t * pattr ,
 	__u64		offset;
 	ssize_t		ret;
 	off64_t		off_ret;
-	static int	cnt = 0;
+	//static int	cnt = 0;
 
 	if(msg_type != MSG_TYPE_SYNC_DATA){
 		print_info("msg type %d fail\n" , MSG_TYPE_SYNC_DATA);
@@ -31,8 +31,8 @@ int msg_handler(struct pthread_attr_t * pattr ,
 		return -1;
 	}
 
-	cnt++;
-	print_debug("file_id %lld blockid %d rcv cnt %d\n" , msg_fileid , msg_blockid , cnt);
+	//cnt++;
+	//print_debug("file_id %lld blockid %d rcv cnt %d\n" , msg_fileid , msg_blockid , cnt);
 
 	ret = write(cft->fd , msg_data , msg_datalen);
 	if(ret < 0){

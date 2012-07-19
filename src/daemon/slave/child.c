@@ -7,31 +7,6 @@
 
 #define ALLOC_BUF_SIZE	(64 * 1024 * 1024)
 
-int do_enough_read(int fd , char * buffer , int req_len)
-{
-	int	len;
-	int	left_len = req_len;
-	char *	ptr = buffer;
-
-retry:
-	len = read(fd , ptr , left_len);
-	if(len == 0){
-		goto retry;
-	}
-
-	if(len < 0){
-		print_error("INFO: child socket closed \n");
-		return -1;
-	}
-
-	left_len -= len;
-	ptr += len;
-
-	if(left_len == 0)
-		return req_len;
-
-	goto retry;
-} 
 
 
 void * do_child(void *arg)
@@ -48,6 +23,7 @@ void * do_child(void *arg)
 	__u32			msg_datalen;
 	__u32			msg_totlen;
 	struct config_file_t *	cft = NULL;
+	int			cnt = 0;
 
 	msg = (msg_data_t *)malloc( ALLOC_BUF_SIZE );
 	if(!msg){
@@ -59,7 +35,7 @@ void * do_child(void *arg)
 	
 	offset = 0;
 	while(1){
-
+		//print_debug("start read child\n");
 		len = read(pattr->childfd , (void*)msg + offset , ALLOC_BUF_SIZE/2);
 		if(len < 0){
 			print_debug("read fail happen\n");
@@ -74,7 +50,7 @@ void * do_child(void *arg)
 next_msg_test:
 		offset += len;
 		if(offset < sizeof(msg_data_t)){
-			//print_debug("not enough for msg head, offset = %d\n", offset);
+			//print_debug("not enough for msg head, offset = %d len %d\n", offset , len);
 			continue;
 		}
 		
@@ -87,12 +63,11 @@ next_msg_test:
 		msg_fileid = (msg_fileid_l & 0xFFFFFFFF) + ((msg_fileid_h & 0xFFFFFFFF) << 32);
 
 		if(offset < (sizeof(msg_data_t) + msg_datalen)){
-			//print_debug("not enough for msg head and data\n");
+			//print_debug("not enough for msg head and data len %d type %d offset %d len %d\n" , msg_datalen , msg_type , offset , len);
 			continue;
 		}
 
 		msg_totlen = sizeof(msg_data_t) + msg_datalen;		
-		//print_debug("enough for a msg totlen %d\n" , msg_totlen);
 
 		if(cft == NULL){
 			cft = config_cft_lookup(msg_fileid);
@@ -102,6 +77,9 @@ next_msg_test:
 			}
 		}
 
+		//print_debug("enough for a msg totlen %d datalen %d offset %d len %d\n" , msg_totlen , msg_datalen , offset , len);
+		cnt++;	
+		print_debug("work thread %d msg cnt %d\n" , (int)pattr , cnt);
 		msg_handler(pattr , cft , msg_type , msg_fileid , msg_blockid , msg->data , msg_datalen);
 
 		offset -= msg_totlen;
@@ -113,6 +91,7 @@ next_msg_test:
 	}
 
 backoff:
+	close(pattr->childfd);
 	pthread_exit((void *)0);
 	return NULL;
 }
