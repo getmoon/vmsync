@@ -34,7 +34,7 @@ int get_file_len(char * filename)
 
 void usage(void)
 {
-	printf("./tcase {src_file} {file_id} {block_size} {\"fixed\"|\"enlarge\"} {loopcnt}\n");
+	printf("./tcase {src_file} {file_id} {block_size} {\"fixed\"|\"enlarge\"|\"sorted\"} {loopcnt}\n");
 }
 
 char		buffer[64*1024*1024];
@@ -188,6 +188,8 @@ int main(int argc , char ** argv)
 				do_fixed_size_test(fd , file_size , file_id , block_size);
 			}else if(str_equal(operate , "enlarge")){
 				do_enlarge_size_test(fd , file_size , file_id , block_size);
+			}else if(str_equal(operate , "sorted")){
+				do_sorted_size_test(fd , file_size , file_id , block_size);	
 			}else{
 				printf("error here\n");
 			}

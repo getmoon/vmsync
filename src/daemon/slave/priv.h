@@ -41,8 +41,6 @@ extern int msg_handler(struct pthread_attr_t * pattr ,
 extern int             block_size;
 extern counter_t       rcv_msg_cnt;
 
-extern __u8            block_id_flag[20000];
-extern __u8            block_id_cnt;
 
 
 #endif//__SLAVE_PRIV_H__

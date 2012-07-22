@@ -5,7 +5,6 @@
 #include "priv.h"
 #include "instance.h"
 
-counter_t	send_success_cnt;
 
 int dowork_lock_init(struct config_instance_t * inst)
 {
@@ -52,11 +51,10 @@ static msg_data_t * load_msg(int fd, __u32 type, uint64_t file_id, __u32 blockid
 		print_error("lseek error\n");
 		return NULL;
 	}
-#if (1)
 	read_size = read(fd, msg->data, blk_len);
+#if (0)
 	if(read_size != blk_len){
-		print_error("bug here\n");
-		printf("read %d len offset %llu\n" , read_size , offset);
+		print_info("read %d len offset %llu\n" , read_size , offset);
 		//exit(0);
 	}
 #endif
@@ -66,12 +64,6 @@ static msg_data_t * load_msg(int fd, __u32 type, uint64_t file_id, __u32 blockid
 	return msg;
 }
 
-int			all_load_cnt = 0;
-int			all_del_cnt = 0;
-int			sgl_create_cnt = 0;
-int			sgl_load_cnt = 0;
-int			sgl_del_cnt = 0;
-int			snd_msg_cnt = 0;
 
 static int send_msg(msg_data_t *msg, struct remote_ip_t * rip , int work_idx , int file_fd )
 {
@@ -91,8 +83,6 @@ retry_head:
 	left_len -= ret;
 	if(left_len > 0)
 		goto retry_head;
-	snd_msg_cnt++;
-	counter_inc(&send_success_cnt);
 	//printf("handler block id %d cnt %d\n" , ntohl(msg->blockid) , counter_read(&send_success_cnt));
 	return 1;
 }
@@ -117,7 +107,6 @@ int do_file_sync(struct config_instance_t * inst ,
 
 
 	if (dir_curr->broadcast == 0xffffffff){
-		all_load_cnt++;
 		for (i = 0; i < inst->ipcnt; i++){
 			rip = inst->remoteip + i;
 			if (rip->sockfd[work_idx] != -1) {
@@ -127,7 +116,6 @@ int do_file_sync(struct config_instance_t * inst ,
 					sprintf(record_signle_name,
 						"%s/sgl+%d+%s", send_dir, dir_curr->blockid, rip->ipname);
 					vmsync_file_create(record_signle_name);
-					sgl_create_cnt++;
 				}
 			}else{
 				sprintf(record_signle_name,
@@ -135,10 +123,8 @@ int do_file_sync(struct config_instance_t * inst ,
 				vmsync_file_create(record_signle_name);
 			}
 		}
-		all_del_cnt++;
 		vmsync_file_remove(dir_curr->filename);
 	}else{
-		sgl_load_cnt++;
 		for (i = 0; i < inst->ipcnt; i++){
 			rip = inst->remoteip + i;
 			if ((rip->sockfd[work_idx] != -1) && (rip->ip == dir_curr->broadcast) ){
@@ -146,7 +132,6 @@ int do_file_sync(struct config_instance_t * inst ,
 				if (ret <= 0){
 					rip->sockfd[work_idx] = -1;
 				}else{
-					sgl_del_cnt++;
 					vmsync_file_remove(dir_curr->filename);
 				}
 			}
@@ -177,9 +162,6 @@ void * do_work_handler(void *arg)
 		}
 	}
 
-	if(work_idx == 0){
-		counter_init(&send_success_cnt);
-	}
 
         sprintf(send_dir, "%s/send/%llu/", sync_work_dir, file_id);
         if (access(send_dir, F_OK))

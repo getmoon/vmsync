@@ -151,7 +151,6 @@ int vmsync_send(uint64_t fild_id, uint64_t offset , uint64_t len)
 		sprintf(file_name, "%s/send/%llu/all+%llu", sync_work_dir, fild_id, i);
 		ret = vmsync_file_create(file_name);
 		cnt++;
-		print_debug("create blockid %llu total cnt %u\n" , i , cnt);
 	}
 
 	return ret;

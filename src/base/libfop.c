@@ -16,7 +16,6 @@ int vmsync_flock_set(int fd, int code)
 int vmsync_file_create(const char * file_name)
 {
 	int	fd;
-	static int cnt = 0;
 
 	if (access(file_name, F_OK)){
 		fd = open(file_name, O_RDWR | O_CREAT, 0666);
@@ -25,8 +24,6 @@ int vmsync_file_create(const char * file_name)
 			return fd;
 		}
 		close(fd);
-		cnt++;
-		print_debug("create cnt %d\n" , cnt);	
 	}
 	return 0;
 }
