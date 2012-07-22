@@ -4,6 +4,7 @@
 
 int		block_size = DEFAULT_BLOCK_SIZE;
 char		config_file[256];
+counter_t	rcv_msg_cnt;
 
 void usage(void)
 {
@@ -21,6 +22,8 @@ int main(int argc , char ** argv)
 		usage();
 		exit(0);
 	}
+
+	counter_init(&rcv_msg_cnt);
 
 	resource_init();
 	sprintf(config_file , "%s" , argv[2]);

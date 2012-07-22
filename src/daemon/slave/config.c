@@ -41,7 +41,7 @@ struct config_file_t * config_cft_lookup(uint64_t file_id)
 int config_cft_alloc(char * filename , uint64_t id)
 {
 	int			i;
-	int			fd;
+	//int			fd;
 	struct config_file_t * cft;
 
 	for(i = 0 ; i < MAX_CONFIG_FILE_DESC ; i++){
@@ -53,12 +53,17 @@ int config_cft_alloc(char * filename , uint64_t id)
 		cft->use = 1;
 		sprintf(cft->filename , "%s" , filename);
 
+#if (0)
 		fd = open(filename , O_WRONLY |O_CREAT, 0666);
 		if(fd < 0){
 			print_error("open backup file %s fail\n" , filename);
 			return -1;
 		}
 		cft->fd = fd;
+#else
+		cft->fd = -1;
+#endif
+		pthread_mutex_init(&cft->filelock , NULL);
 		return 0;
 	}
 

@@ -5,6 +5,8 @@
 #include "priv.h"
 #include "instance.h"
 
+counter_t	send_success_cnt;
+
 int dowork_lock_init(struct config_instance_t * inst)
 {
 	char                                    file_lock_name[512] = "";
@@ -90,6 +92,8 @@ retry_head:
 	if(left_len > 0)
 		goto retry_head;
 	snd_msg_cnt++;
+	counter_inc(&send_success_cnt);
+	//printf("handler block id %d cnt %d\n" , ntohl(msg->blockid) , counter_read(&send_success_cnt));
 	return 1;
 }
 
@@ -152,6 +156,7 @@ int do_file_sync(struct config_instance_t * inst ,
 	return 0;
 }
 
+
 void * do_work_handler(void *arg)
 {
 	struct config_instance_t * 	inst = (struct config_instance_t *)arg;
@@ -170,6 +175,10 @@ void * do_work_handler(void *arg)
 			work_idx = i;
 			print_debug("my work idx is %d\n", work_idx);
 		}
+	}
+
+	if(work_idx == 0){
+		counter_init(&send_success_cnt);
 	}
 
         sprintf(send_dir, "%s/send/%llu/", sync_work_dir, file_id);
@@ -210,8 +219,8 @@ void * do_work_handler(void *arg)
 			do_file_sync(inst , work_idx , msg_buff , source_file_fid , send_dir , dir_curr);
 			vmsync_file_unlock(inst->lock_fd[dir_curr->blockid % LOCK_HASH_SIZE]);
 		}
-		print_debug("load all %d load sgl %d del all %d del sgl %d create sgl %d snd_msg %d\n" , 
-			all_load_cnt , sgl_load_cnt , all_del_cnt , sgl_del_cnt , sgl_create_cnt , snd_msg_cnt);
+		//print_debug("load all %d load sgl %d del all %d del sgl %d create sgl %d snd_msg %d\n" , 
+		//	all_load_cnt , sgl_load_cnt , all_del_cnt , sgl_del_cnt , sgl_create_cnt , snd_msg_cnt);
 		close(source_file_fid);
 		release_dir(dir_head);	
 

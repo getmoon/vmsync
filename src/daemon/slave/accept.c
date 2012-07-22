@@ -2,12 +2,17 @@
 #include "base.h"
 #include "priv.h"
 
+__u8            block_id_flag[20000];
+__u8		block_id_cnt = 0;
+
 int do_accept(int listenfd)
 {
 	int	 		newsockfd;
 	int			clilen;
 	struct sockaddr_in 	cli_addr;
 	struct pthread_attr_t * pattr;
+
+	memset(block_id_flag , 0 , 20000);
 
 	for(;;){
 		clilen = sizeof(cli_addr);

@@ -92,7 +92,8 @@ static int load_dir(struct config_instance_t * inst , const char * dir_name)
 
 			//print_debug("load block id %d load cnt %d\n" , curr->blockid , cnt);
 
-			work_idx = i%MAX_THREAD_PER_INST;
+			//work_idx = i%MAX_THREAD_PER_INST;
+			work_idx = curr->blockid % MAX_THREAD_PER_INST;
 
 			pthread_mutex_lock(&inst->work_thread_lock[work_idx]);
 			//print_debug("add blockid %d task to work_idx %d \n" , curr->blockid , work_idx);
@@ -136,6 +137,7 @@ void * do_dir_handler(void * arg)
 			continue;
                 }
 		last_handle_time = get_current_seconds();
+		//print_debug("time %u\n" , last_handle_time);
 
 		load_dir(inst , send_dir);
 
@@ -157,7 +159,7 @@ void * do_dir_handler(void * arg)
 			usleep(1000);
 			need_wait = 0;
 		}
-		print_debug("test out\n");
+		//print_debug("test out\n");
 	}
         return 0;
 }

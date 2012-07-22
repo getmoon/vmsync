@@ -1,0 +1,10 @@
+./tcase  /opt/sync/data/master/testfile0 172057594037927935 4096 enlarge 100 &
+./tcase  /opt/sync/data/master/testfile1 272057594037927931 4096 enlarge 100 &
+./tcase  /opt/sync/data/master/testfile2 372057594037927932 4096 enlarge 100 &
+./tcase  /opt/sync/data/master/testfile3 472057594037927933 4096 enlarge 100 &
+./tcase  /opt/sync/data/master/testfile4 572057594037927923 4096 enlarge 100 &
+./tcase  /opt/sync/data/master/testfile5 672057594037927913 4096 enlarge 100 &
+./tcase  /opt/sync/data/master/testfile6 772057594037927933 4096 enlarge 100 &
+./tcase  /opt/sync/data/master/testfile7 872057594037927943 4096 enlarge 100 &
+./tcase  /opt/sync/data/master/testfile8 972057594037927953 4096 enlarge 100 &
+./tcase  /opt/sync/data/master/testfile9 720575940379279663 4096 enlarge 100 &

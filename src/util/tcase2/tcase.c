@@ -47,7 +47,7 @@ int do_sorted_size_test(int fd , uint32_t file_size , uint64_t file_id , uint32_
 	int		ret;
 
 	for(i = 0 ; i < len ; i++){
-		buffer[i] = random()&0xff;
+		buffer[i] = (i + 1)&0xff;
 	}
 
 	for(i = 0 ; ; i++){

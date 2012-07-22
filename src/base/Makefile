@@ -1,5 +1,5 @@
 
-OBJ = libbase.o libfop.o libtime.o
+OBJ = libbase.o libfop.o libtime.o 
 LIB = libbase.a
 DLL = libbase.so
 

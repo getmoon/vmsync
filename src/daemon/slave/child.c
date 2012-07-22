@@ -79,7 +79,7 @@ next_msg_test:
 
 		//print_debug("enough for a msg totlen %d datalen %d offset %d len %d\n" , msg_totlen , msg_datalen , offset , len);
 		cnt++;	
-		print_debug("work thread %d msg cnt %d\n" , (int)pattr , cnt);
+		//print_debug("work thread %d msg cnt %d\n" , (int)pattr , cnt);
 		msg_handler(pattr , cft , msg_type , msg_fileid , msg_blockid , msg->data , msg_datalen);
 
 		offset -= msg_totlen;

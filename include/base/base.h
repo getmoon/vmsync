@@ -132,5 +132,43 @@ extern int get_current_seconds(void);
 extern int parse_u32(char *arg, uint32_t *num);
 extern int parse_ip(char *arg, uint32_t *ip);
 
+typedef struct __counter_t{
+	pthread_mutex_t		lock;
+	int			cnt;
+}counter_t;
+
+
+static inline int counter_init(counter_t * cnt)
+{
+	pthread_mutex_init(&cnt->lock , NULL);
+	return 0;
+}
+
+static inline int counter_inc(counter_t * cnt)
+{
+	pthread_mutex_lock(&cnt->lock);
+	cnt->cnt++;
+	pthread_mutex_unlock(&cnt->lock);
+	return 0;
+}
+
+static inline int counter_add(counter_t * cnt , int value)
+{
+	pthread_mutex_lock(&cnt->lock);
+	cnt->cnt += value;
+	pthread_mutex_unlock(&cnt->lock);
+	return 0;
+}
+
+static inline int counter_read(counter_t * cnt)
+{
+	int	value;
+
+	pthread_mutex_lock(&cnt->lock);
+	value = cnt->cnt;
+	pthread_mutex_unlock(&cnt->lock);
+	return value;
+}
+
 #endif
 
